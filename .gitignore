@@ -130,4 +130,5 @@ dmypy.json
 
 model/
 volumes/
+tmp/
 *.pt

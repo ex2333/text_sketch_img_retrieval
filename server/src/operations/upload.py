@@ -3,9 +3,9 @@ from config import DEFAULT_TABLE
 from logs import LOGGER
 from milvus_helpers import MilvusHelper
 from mysql_helpers import MySQLHelper
-from encode import Resnet50
+from encode import TaskFormer
 
-def do_upload(table_name: str, img_path: str, model: Resnet50, milvus_client: MilvusHelper, mysql_cli: MySQLHelper):
+def do_upload(table_name: str, img_path: str, model: TaskFormer, milvus_client: MilvusHelper, mysql_cli: MySQLHelper):
     try:
         if not table_name:
             table_name = DEFAULT_TABLE

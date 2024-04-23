@@ -5,7 +5,7 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.param_functions import Form
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import FileResponse
-from encode import Resnet50
+from encode import TaskFormer
 from milvus_helpers import MilvusHelper
 from mysql_helpers import MySQLHelper
 from config import TOP_K, UPLOAD_PATH
@@ -29,7 +29,7 @@ app.add_middleware(
     allow_headers=["*"],
 
 )
-MODEL = Resnet50()
+MODEL = TaskFormer()
 MILVUS_CLI = MilvusHelper()
 MYSQL_CLI = MySQLHelper()
 
@@ -96,6 +96,7 @@ async def upload_images(image: UploadFile = File(None), url: str = None, table_n
         LOGGER.error(e)
         return {'status': False, 'msg': e}, 400
 
+
 @app.post('/img/search')
 async def search_images(image: UploadFile = File(...), topk: int = Form(TOP_K), table_name: str = None):
     # Search the upload image in Milvus/MySQL
@@ -105,10 +106,12 @@ async def search_images(image: UploadFile = File(...), topk: int = Form(TOP_K), 
         img_path = os.path.join(UPLOAD_PATH, image.filename)
         with open(img_path, "wb+") as f:
             f.write(content)
-        paths, distances = do_search(table_name, img_path, topk, MODEL, MILVUS_CLI, MYSQL_CLI)
+        text_query = input('query: ')
+        paths, distances = do_search(table_name, text_query, img_path, topk, MODEL, MILVUS_CLI, MYSQL_CLI)
         res = dict(zip(paths, distances))
         res = sorted(res.items(), key=lambda item: item[1])
         LOGGER.info("Successfully searched similar images!")
+        os.remove(img_path)
         return res
     except Exception as e:
         LOGGER.error(e)

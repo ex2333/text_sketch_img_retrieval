@@ -1,12 +1,33 @@
 import sys
 import os
 from diskcache import Cache
-from config import DEFAULT_TABLE
+from config import DEFAULT_TABLE, BATCH_SIZE, DEVICE
 from logs import LOGGER
 from milvus_helpers import MilvusHelper
 from mysql_helpers import MySQLHelper
-from encode import Resnet50
+from encode import TaskFormer
 
+from torch.utils.data import Dataset, DataLoader
+from PIL import Image
+
+
+class ImgDataBase(Dataset):
+    def __init__(self, img_dir, transformers):
+        super().__init__()
+        self.img_files = []
+        self.transformers = transformers
+        for f in os.listdir(img_dir):
+            if ((f.endswith(extension) for extension in
+                ['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG']) and not f.startswith('.DS_Store')):
+                self.img_files.append(os.path.join(img_dir, f))
+
+    def __len__(self):
+        return len(self.img_files)
+
+    def __getitem__(self, index):
+        img_file = self.img_files[index]
+        img = Image.open(img_file)
+        return self.transformers(img), img_file
 
 # Get the path to the image
 def get_imgs(path):
@@ -24,16 +45,28 @@ def extract_features(img_dir, model):
         cache = Cache('./tmp')
         feats = []
         names = []
-        img_list = get_imgs(img_dir)
-        total = len(img_list)
+        dataset = ImgDataBase(img_dir, model.img_preprocess)
+        total = len(dataset)
         cache['total'] = total
-        for i, img_path in enumerate(img_list):
+        dataloader = DataLoader(
+            dataset,
+            batch_size=BATCH_SIZE,
+            shuffle=False,
+            num_workers=2,
+            pin_memory=True,
+            sampler=None,
+            drop_last=False
+        )
+        for i, batch in enumerate(dataloader):
             try:
-                norm_feat = model.resnet50_extract_feat(img_path)
-                feats.append(norm_feat)
-                names.append(img_path.encode())
-                cache['current'] = i + 1
-                LOGGER.info(f"Extracting feature from image No. {i + 1} , {total} images in total")
+                imgs, img_paths = batch
+                feas = model.extract_database_feat(imgs.to(DEVICE))
+                feas = feas.cpu().numpy()
+                for f, p in zip(feas, img_paths):
+                    feats.append(f.reshape(-1))
+                    names.append(p.encode())
+                cache['current'] = (i + 1) * imgs.shape[0]
+                LOGGER.info(f"Extracting feature from image No. {(i + 1) * imgs.shape[0]} , {total} images in total")
             except Exception as e:
                 LOGGER.error(f"Error with extracting feature from image {e}")
                 continue
@@ -50,7 +83,7 @@ def format_data(ids, names):
 
 
 # Import vectors to Milvus and data to Mysql respectively
-def do_load(table_name: str, image_dir: str, model: Resnet50, milvus_client: MilvusHelper, mysql_cli: MySQLHelper):
+def do_load(table_name: str, image_dir: str, model: TaskFormer, milvus_client: MilvusHelper, mysql_cli: MySQLHelper):
     if not table_name:
         table_name = DEFAULT_TABLE
     if not milvus_client.has_collection(table_name):
