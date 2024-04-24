@@ -12,7 +12,7 @@ def do_upload(table_name: str, img_path: str, model: TaskFormer, milvus_client: 
         if not milvus_client.has_collection(table_name):
             milvus_client.create_collection(table_name)
             milvus_client.create_index(table_name)
-        feat = model.resnet50_extract_feat(img_path)
+        feat = model.extract_query_feat(None, img_path).reshape(-1).cpu().numpy()
         ids = milvus_client.insert(table_name, [feat])
         mysql_cli.create_mysql_table(table_name)
         mysql_cli.load_data_to_mysql(table_name, [(str(ids[0]), img_path.encode())])

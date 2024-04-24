@@ -16,10 +16,11 @@ class ImgDataBase(Dataset):
         super().__init__()
         self.img_files = []
         self.transformers = transformers
-        for f in os.listdir(img_dir):
-            if ((f.endswith(extension) for extension in
-                ['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG']) and not f.startswith('.DS_Store')):
-                self.img_files.append(os.path.join(img_dir, f))
+        for root, dirs, files in os.walk(img_dir):
+            for f in files:
+                if ((f.endswith(extension) for extension in ['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG']) and not f.startswith('.DS_Store')):
+                    self.img_files.append(os.path.join(root, f))
+        self.img_files.sort()
 
     def __len__(self):
         return len(self.img_files)
@@ -29,13 +30,15 @@ class ImgDataBase(Dataset):
         img = Image.open(img_file)
         return self.transformers(img), img_file
 
+
 # Get the path to the image
 def get_imgs(path):
     pics = []
-    for f in os.listdir(path):
-        if ((f.endswith(extension) for extension in
-             ['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG']) and not f.startswith('.DS_Store')):
-            pics.append(os.path.join(path, f))
+    for root, dirs, files in os.walk(path):
+        for f in files:
+            if ((f.endswith(extension) for extension in ['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG']) and not f.startswith('.DS_Store')):
+                pics.append(os.path.join(root, f))
+
     return pics
 
 

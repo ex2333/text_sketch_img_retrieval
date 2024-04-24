@@ -70,6 +70,10 @@ const Setting = (props: any) => {
         color: "blue !important",
         width: isMobile ? "80%" : "auto",
       },
+      textQueryInput: {
+        color: "blue !important",
+        width: "90%",
+      },
       customFab: {
         color: "#fff",
         backgroundColor: baseColor,
@@ -78,6 +82,16 @@ const Setting = (props: any) => {
         "&:hover": {
           backgroundColor: baseColor,
         },
+      },
+      submitFab: {
+        color: "#fff",
+        backgroundColor: baseColor,
+        width:  "90%",
+        height: "36px",
+        "&:hover": {
+          backgroundColor: baseColor,
+        },
+        marginBottom: "20px",
       },
       customDeleteFab: {
         position: "absolute",
@@ -127,7 +141,7 @@ const Setting = (props: any) => {
       },
       dropzoneContainer: {
         backgroundColor: "transparent",
-        width: "250px",
+        width: "90%",
         height: "250px",
         borderRadius: "10px",
         border: "solid .5px #C8C8C8",
@@ -192,11 +206,15 @@ const Setting = (props: any) => {
     });
   };
 
-  const uploadImg = (file: any) => {
+  const onImgUpload = (file: any) => {
     setImage(file);
     reader.readAsDataURL(file);
-    _search({ topK, image: file, textQuery: textQuery });
+    // _search({ topK, image: file, textQuery: textQuery });
   };
+
+  const doSearch = () => {
+    _search({topK, image: image, textQuery: textQuery});
+  }
 
   const onInputChange = (e: any) => {
     const val = e.target.value;
@@ -249,18 +267,6 @@ const Setting = (props: any) => {
       }
     });
   };
-
-  // const uploadTextQuery = () => {
-  //   train({ File: textQuery }).then((res: any) => {
-  //     if (res.status === 200) {
-  //       setLoading(true);
-  //       setTimeout(() => {
-  //         setInputs("");
-  //         _keepProcess();
-  //       }, 1000);
-  //     }
-  //   });
-  // };
 
   const clear = () => {
     clearAll().then((res: any) => {
@@ -358,10 +364,22 @@ const Setting = (props: any) => {
           }}
         />
       </div>
-      <SeperatLine title={`ORIGINAL IMAGE`} style={{ marginBottom: "50px" }} />
-      <div className={classes.setPath}>
+      <SeperatLine title={`ORIGINAL IMAGE`} style={{ marginBottom: "30px" }} />
+      <div style={{textAlign: "center"}}>
+        <Fab
+              classes={{
+                root: classes.submitFab,
+                focusVisible: classes.submitFab,
+              }}
+              variant="extended"
+              onClick={doSearch}
+            >
+              Submit Query
+        </Fab>
+      </div>
+      <div className={classes.setPath} style={{justifyContent: "center", marginBottom: "30px"}}>
           <TextField
-            classes={{ root: classes.customInput }}
+            classes={{ root: classes.textQueryInput }}
             label=""
             variant="outlined"
             value={textQuery}
@@ -377,7 +395,7 @@ const Setting = (props: any) => {
             InputProps={{
               style: {
                 textAlign: "left",
-                width: isMobile ? "100%" : "340px",
+                width: "100%",
                 height: "40px",
               },
               classes: {
@@ -387,17 +405,6 @@ const Setting = (props: any) => {
               placeholder: "Text Query",
             }}
           />
-          {/* <Fab
-            classes={{
-              root: classes.customFab,
-              focusVisible: classes.customFab,
-            }}
-          >
-            <AddIcon
-              // onClick={uploadImg}
-              classes={{ root: classes.customIcon }}
-            />
-          </Fab> */}
       </div>
       <div className={classes.upload}>
         {image ? (
@@ -428,7 +435,7 @@ const Setting = (props: any) => {
             acceptedFiles={["image/*"]}
             filesLimit={1}
             dropzoneText={`click to upload / drag a image here`}
-            onDrop={uploadImg}
+            onDrop={onImgUpload}
             dropzoneClass={classes.dropzoneContainer}
             showPreviewsInDropzone={false}
             dropzoneParagraphClass={classes.dropzoneText}

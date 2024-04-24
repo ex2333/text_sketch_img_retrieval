@@ -110,8 +110,8 @@ async def search_images(image: UploadFile = File(...), text_query: str = Form(''
         paths, distances = do_search(table_name, text_query, img_path, topk, MODEL, MILVUS_CLI, MYSQL_CLI)
         res = dict(zip(paths, distances))
         res = sorted(res.items(), key=lambda item: item[1], reverse=True)
-        LOGGER.info("Successfully searched similar images!")
-        # os.remove(img_path)
+        LOGGER.info(f"Search images use text: {text_query} and image: {img_path}")
+        os.remove(img_path)
         return res
     except Exception as e:
         LOGGER.error(e)
