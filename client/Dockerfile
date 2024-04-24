@@ -4,6 +4,7 @@ ENV NODE_ENV=production
 ENV NODE_OPTIONS="--openssl-legacy-provider"
 WORKDIR /app
 COPY package*.json ./
+RUN npm config set registry https://mirrors.huaweicloud.com/repository/npm/
 RUN npm install
 COPY . .
 RUN npm run build
@@ -31,6 +32,7 @@ RUN apk add --no-cache bash
 
 # Make our shell script executable
 RUN chmod +x env.sh
+RUN sed -i 's/\r$//' env.sh
 
 # Start Nginx server
 CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]

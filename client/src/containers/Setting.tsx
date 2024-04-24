@@ -156,6 +156,7 @@ const Setting = (props: any) => {
   const { setImages, loading, setLoading } = props;
   const classes = useStyles({});
   const [inputs, setInputs]: any = useState("");
+  const [textQuery, setTextQuery]: any = useState("");
   const [topK, setTopK]: any = useState(5);
   const [totalNum, setTotalNum]: any = useState(0);
   const [[current, total], setProcessedNum]: any = useState([0, 0]);
@@ -178,10 +179,11 @@ const Setting = (props: any) => {
     },
     false
   );
-  const _search = ({ topK, image }: any) => {
+  const _search = ({ topK, image, textQuery }: any) => {
     const fd = new FormData();
     fd.set("topk", topK);
     fd.append("image", image);
+    fd.set("textQuery", textQuery)
     search(fd).then((res: any) => {
       const { status, data } = res || {};
       if (status === 200) {
@@ -193,12 +195,17 @@ const Setting = (props: any) => {
   const uploadImg = (file: any) => {
     setImage(file);
     reader.readAsDataURL(file);
-    _search({ topK, image: file });
+    _search({ topK, image: file, textQuery: textQuery });
   };
 
   const onInputChange = (e: any) => {
     const val = e.target.value;
     setInputs(val);
+  };
+
+  const onTextQueryInputChange = (e: any) => {
+    const val = e.target.value;
+    setTextQuery(val);
   };
 
   const onTopKChange = (e: any, val: any) => {
@@ -242,6 +249,18 @@ const Setting = (props: any) => {
       }
     });
   };
+
+  // const uploadTextQuery = () => {
+  //   train({ File: textQuery }).then((res: any) => {
+  //     if (res.status === 200) {
+  //       setLoading(true);
+  //       setTimeout(() => {
+  //         setInputs("");
+  //         _keepProcess();
+  //       }, 1000);
+  //     }
+  //   });
+  // };
 
   const clear = () => {
     clearAll().then((res: any) => {
@@ -340,6 +359,46 @@ const Setting = (props: any) => {
         />
       </div>
       <SeperatLine title={`ORIGINAL IMAGE`} style={{ marginBottom: "50px" }} />
+      <div className={classes.setPath}>
+          <TextField
+            classes={{ root: classes.customInput }}
+            label=""
+            variant="outlined"
+            value={textQuery}
+            onChange={onTextQueryInputChange}
+            InputLabelProps={{
+              shrink: true,
+              classes: {
+                root: classes.controlLabel,
+                focused: classes.controlLabel,
+              },
+            }}
+            margin="normal"
+            InputProps={{
+              style: {
+                textAlign: "left",
+                width: isMobile ? "100%" : "340px",
+                height: "40px",
+              },
+              classes: {
+                notchedOutline: classes.notchedOutline,
+                root: classes.formLabel,
+              },
+              placeholder: "Text Query",
+            }}
+          />
+          <Fab
+            classes={{
+              root: classes.customFab,
+              focusVisible: classes.customFab,
+            }}
+          >
+            {/* <AddIcon
+              // onClick={uploadImg}
+              classes={{ root: classes.customIcon }}
+            /> */}
+          </Fab>
+      </div>
       <div className={classes.upload}>
         {image ? (
           <div className={classes.benchImage}>

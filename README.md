@@ -6,7 +6,6 @@ The system architecture is as below:
 
 <img src="pic/workflow.png" height = "500" alt="arch" align=center />
 
-
 ## Data Source
 
 This demo uses the PASCAL VOC image set, which contains 17125 images with 20 categories: human; animals (birds, cats, cows, dogs, horses, sheep); transportation (planes, bikes, boats, buses, cars, motorcycles, trains); household (bottles, chairs, tables, pot plants, sofas, TVs).
@@ -33,13 +32,16 @@ Download location: https://drive.google.com/file/d/1n_370-5Stk4t0uDV1QqvYkcvyV8r
 The reverse image search system requires Milvus, MySQL, WebServer and WebClient services. We can start these containers with one click through [docker-compose.yaml](./docker-compose.yaml).
 
 - Modify docker-compose.yaml to map your data directory to the docker container of WebServer
+
 ```bash
 $ wget https://raw.githubusercontent.com/milvus-io/bootcamp/master/solutions/image/reverse_image_search/docker-compose.yaml
 $ vim docker-compose.yaml
 ```
+
 **Then to change line 75:** `./data:/data` --> `your_data_path:/data`
 
 - Create containers & start servers with docker-compose.yaml
+
 ```bash
 $ docker-compose up -d
 ```
@@ -84,10 +86,10 @@ $ sudo docker-compose up -d
 ```
 
 There are several ways to start Mysql. One option is using docker to create a container:
+
 ```bash
 $ docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d --name image_search_mysql mysql:5.7
 ```
-
 
 ### 2. Start API Server
 
@@ -111,14 +113,14 @@ $ vim src/config.py
 
 Modify the parameters according to your own environment. Here listing some parameters that need to be set, for more information please refer to [config.py](./server/src/config.py).
 
-| **Parameter**    | **Description**                                       | **Default setting** |
-| ---------------- | ----------------------------------------------------- | ------------------- |
-| MILVUS_HOST      | The IP address of Milvus, you can get it by ifconfig. | 127.0.0.1           |
-| MILVUS_PORT      | Port of Milvus.                                       | 19530               |
-| VECTOR_DIMENSION | Dimension of the vectors.                             | 1000                |
-| MYSQL_HOST       | The IP address of Mysql.                              | 127.0.0.1           |
-| MYSQL_PORT       | Port of Mysql.                                        | 3306                |
-| DEFAULT_TABLE    | The milvus and mysql default collection name.         | milvus_img_search   |
+| **Parameter** | **Description**                                 | **Default setting** |
+| ------------------- | ----------------------------------------------------- | ------------------------- |
+| MILVUS_HOST         | The IP address of Milvus, you can get it by ifconfig. | 127.0.0.1                 |
+| MILVUS_PORT         | Port of Milvus.                                       | 19530                     |
+| VECTOR_DIMENSION    | Dimension of the vectors.                             | 1000                      |
+| MYSQL_HOST          | The IP address of Mysql.                              | 127.0.0.1                 |
+| MYSQL_PORT          | Port of Mysql.                                        | 3306                      |
+| DEFAULT_TABLE       | The milvus and mysql default collection name.         | milvus_img_search         |
 
 - **Run the code**
 
@@ -154,10 +156,10 @@ Next, start the frontend GUI.
 
 Modify the parameters according to your own environment.
 
-| **Parameter**   | **Description**                                       | **example**      |
-| --------------- | ----------------------------------------------------- | ---------------- |
-| **API_HOST** | The IP address of the backend server.                    | 127.0.0.1        |
-| **API_PORT** | The port of the backend server.                          | 5000             |
+| **Parameter** | **Description**                 | **example** |
+| ------------------- | ------------------------------------- | ----------------- |
+| **API_HOST**  | The IP address of the backend server. | 127.0.0.1         |
+| **API_PORT**  | The port of the backend server.       | 5000              |
 
 ```bash
 $ export API_HOST='127.0.0.1'
@@ -169,10 +171,11 @@ $ export API_PORT='5000'
 First, build a container by pulling docker image.
 
 ```bash
-$ docker run -d \
--p 8001:80 \
--e "API_URL=http://${API_HOST}:${API_PORT}" \
- milvusbootcamp/img-search-client:2.2.10
+$ docker run -d -p 8001:80 -e "API_URL=http://${API_HOST}:${API_PORT}"  milvusbootcamp/img-search-client:2.2.10
+```
+
+```bash
+docker run -d -p 8001:80 -e "APIURL=http://127.0.0.1:5000" --name ts_search_client ts_search_client 
 ```
 
 ## How to use front-end
