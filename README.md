@@ -1,3 +1,5 @@
+模型权重下载：https://patsorn.me/projects/tsbir/data/tsbir_model_final.pt
+
 # Reverse Image Search Based on Milvus & Towhee
 
 This demo uses [towhee](https://github.com/towhee-io/towhee) image embedding operator to extract image features by ResNet50, and uses Milvus to build a system that can perform reverse image search.
