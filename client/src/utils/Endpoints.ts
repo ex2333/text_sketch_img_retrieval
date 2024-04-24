@@ -4,7 +4,7 @@ declare global {
     }
 }
 
-let endpoint = `http://172.16.20.10:5000`;
+let endpoint = `http://127.0.0.1:5000`;
 if (window._env_ && window._env_.API_URL) {
     endpoint = window._env_.API_URL;
 }

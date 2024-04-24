@@ -175,7 +175,7 @@ $ docker run -d -p 8001:80 -e "API_URL=http://${API_HOST}:${API_PORT}"  milvusbo
 ```
 
 ```bash
-docker run -d -p 8001:80 -e "APIURL=http://127.0.0.1:5000" --name ts_search_client ts_search_client 
+docker run -d -p 8001:80 -e "API_URL=http://127.0.0.1:5000" --name ts_search_client ts_search_client 
 ```
 
 ## How to use front-end

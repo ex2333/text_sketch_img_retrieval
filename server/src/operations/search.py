@@ -6,7 +6,7 @@ from mysql_helpers import MySQLHelper
 from encode import TaskFormer
 
 
-def do_search(table_name: str, text_query, img_path: str, top_k: int, model: TaskFormer, milvus_client: MilvusHelper, mysql_cli: MySQLHelper):
+def do_search(table_name: str, text_query: str, img_path: str, top_k: int, model: TaskFormer, milvus_client: MilvusHelper, mysql_cli: MySQLHelper):
     try:
         if not table_name:
             table_name = DEFAULT_TABLE

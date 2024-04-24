@@ -183,7 +183,7 @@ const Setting = (props: any) => {
     const fd = new FormData();
     fd.set("topk", topK);
     fd.append("image", image);
-    fd.set("textQuery", textQuery)
+    fd.set("text_query", textQuery)
     search(fd).then((res: any) => {
       const { status, data } = res || {};
       if (status === 200) {
@@ -211,7 +211,7 @@ const Setting = (props: any) => {
   const onTopKChange = (e: any, val: any) => {
     setTopK(val);
     if (val && image) {
-      delayRunFunc({ topK: val, image }, _search, 300);
+      delayRunFunc({ topK: val, image, text_query: textQuery}, _search, 300);
     }
   };
   const _keepProcess = () => {
@@ -387,17 +387,17 @@ const Setting = (props: any) => {
               placeholder: "Text Query",
             }}
           />
-          <Fab
+          {/* <Fab
             classes={{
               root: classes.customFab,
               focusVisible: classes.customFab,
             }}
           >
-            {/* <AddIcon
+            <AddIcon
               // onClick={uploadImg}
               classes={{ root: classes.customIcon }}
-            /> */}
-          </Fab>
+            />
+          </Fab> */}
       </div>
       <div className={classes.upload}>
         {image ? (
