@@ -11,7 +11,8 @@ import { DropzoneArea } from "material-ui-dropzone";
 import SeperatLine from "../components/SeperatLine";
 import { baseColor } from "../utils/color";
 import Logo from "./Logo.svg";
-import { delayRunFunc } from "../utils/Helper";
+// import { delayRunFunc } from "../utils/Helper";
+import DrawingBoard from "../components/DrawingBoard"; // 导入手绘组件
 
 const Setting = (props: any) => {
   const isMobile = !useMediaQuery("(min-width:1000px)");
@@ -406,42 +407,47 @@ const Setting = (props: any) => {
             }}
           />
       </div>
-      <div className={classes.upload}>
-        {image ? (
-          <div className={classes.benchImage}>
-            <img
-              ref={benchImage}
-              className={classes.benchImage}
-              src={image}
-              alt="..."
-            />
-            <Fab
-              color="primary"
-              aria-label="add"
-              size="small"
-              classes={{ root: classes.customDeleteFab }}
-            >
-              <CloseIcon
-                onClick={() => {
-                  setImage();
-                  setImages([]);
-                }}
-                classes={{ root: classes.customDelete }}
+      <div className={classes.upload} style={{ display: "flex", flexDirection: "column" }}>
+        <div>
+          {image ? (
+              <div className={classes.benchImage}>
+                <img
+                    ref={benchImage}
+                    className={classes.benchImage}
+                    src={image}
+                    alt="..."
+                />
+                <Fab
+                    color="primary"
+                    aria-label="add"
+                    size="small"
+                    classes={{ root: classes.customDeleteFab }}
+                >
+                  <CloseIcon
+                      onClick={() => {
+                        setImage();
+                        setImages([]);
+                      }}
+                      classes={{ root: classes.customDelete }}
+                  />
+                </Fab>
+              </div>
+          ) : (
+              <DropzoneArea
+                  acceptedFiles={["image/*"]}
+                  filesLimit={1}
+                  dropzoneText={`click to upload / drag a image here`}
+                  onDrop={onImgUpload}
+                  dropzoneClass={classes.dropzoneContainer}
+                  showPreviewsInDropzone={false}
+                  dropzoneParagraphClass={classes.dropzoneText}
+                  // maxFileSize={} bit
               />
-            </Fab>
-          </div>
-        ) : (
-          <DropzoneArea
-            acceptedFiles={["image/*"]}
-            filesLimit={1}
-            dropzoneText={`click to upload / drag a image here`}
-            onDrop={onImgUpload}
-            dropzoneClass={classes.dropzoneContainer}
-            showPreviewsInDropzone={false}
-            dropzoneParagraphClass={classes.dropzoneText}
-            // maxFileSize={} bit
-          />
-        )}
+          )}
+        </div>
+        <div>
+          <DrawingBoard onUpload={onImgUpload} />
+        </div>
       </div>
     </div>
   );
