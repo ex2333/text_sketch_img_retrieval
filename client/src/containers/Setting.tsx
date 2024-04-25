@@ -214,6 +214,12 @@ const Setting = (props: any) => {
     // _search({ topK, image: file, textQuery: textQuery });
   };
 
+  const onSketchUpload = (file: any) => {
+    setImage(file);
+    reader.readAsDataURL(file);
+    // _search({ topK, image: file, textQuery: textQuery });
+  };
+
   const doSearch = () => {
     _search({topK, image: image, textQuery: textQuery});
   }
@@ -407,6 +413,23 @@ const Setting = (props: any) => {
               placeholder: "Text Query",
             }}
           />
+          <Fab
+            // classes={{
+            //     root: classes.submitFab,
+            //     focusVisible: classes.submitFab,
+            //   }}
+              style={{
+                color: "#fff",
+                backgroundColor: baseColor,
+                width:  "30%",
+                height: "36px",
+                // marginBottom: "20px",
+              }}
+              variant="extended"
+            // onClick={}
+          >
+            Draw/Upload
+          </Fab>
       </div>
       <div className={classes.upload} style={{ display: "flex", flexDirection: "column" }}>
         <div>
@@ -451,6 +474,9 @@ const Setting = (props: any) => {
                   // maxFileSize={} bit
               />
           )}
+        </div>
+        <div>
+          <DrawingBoard onUpload={onSketchUpload} />
         </div>
       </div>
     </div>
