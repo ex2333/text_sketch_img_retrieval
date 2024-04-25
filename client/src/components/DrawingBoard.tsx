@@ -62,6 +62,8 @@ const DrawingBoard = ({ onUpload }) => {
                 onMouseMove={draw}
                 onMouseUp={endDrawing}
                 onMouseOut={endDrawing}
+                width={390}
+                height={300}
                 style={{width: "390px", height: "300px", border: "1px solid black", backgroundColor: "#CCE8CF", borderRadius: "10px"}}
             ></canvas>
             <div style={{ marginTop: "10px" }}>
