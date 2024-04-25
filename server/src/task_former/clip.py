@@ -64,6 +64,7 @@ def _add_background(img):
     width = img.width
     height = img.height
 
+    img = img.convert('RGBA')
     image = Image.new('RGBA', size=(width, height), color=(255, 255, 255, 255))
     image.paste(img, (0, 0), mask=img)
     return image

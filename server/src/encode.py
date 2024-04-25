@@ -24,13 +24,7 @@ class TaskFormer:
         self.text_preprocess = tokenize
 
     @torch.no_grad()
-    def extract_database_feat(self, imgs):
-        feas = self.model.encode_image(imgs)
-        feas = feas / feas.norm(dim=-1, keepdim=True)
-        return feas
-
-    @torch.no_grad()
-    def extract_query_feat(self, text=None, sketch_path=None):
+    def extract_feat(self, text=None, sketch_path=None):
         assert not (text is None and sketch_path is None)
         sketch_fea, text_fea = 0, 0
         if sketch_path:

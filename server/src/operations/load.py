@@ -53,36 +53,25 @@ def get_imgs(path):
 
 
 # Get the vector of images
-def extract_features(img_dir, model):
+def extract_features(img_dir, model: TaskFormer):
     try:
         cache = Cache('./tmp')
         feats = []
         names = []
-        dataset = ImgDataBase(img_dir, model.img_preprocess)
-        total = len(dataset)
+        img_files = get_imgs(img_dir)
+        total = len(img_files)
         cache['total'] = total
-        dataloader = DataLoader(
-            dataset,
-            batch_size=BATCH_SIZE,
-            shuffle=False,
-            num_workers=2,
-            pin_memory=True,
-            sampler=None,
-            drop_last=False
-        )
-        for i, batch in enumerate(dataloader):
+        for i, img_file in enumerate(img_files):
             try:
-                imgs, img_paths = batch
-                feas = model.extract_database_feat(imgs.to(DEVICE))
-                feas = feas.cpu().numpy()
-                for j, (f, p) in enumerate(zip(feas, img_paths)):
-                    feats.append(f.reshape(-1))
-                    names.append(p.encode())
-                    curr = i * BATCH_SIZE + j
-                    cache['current'] = curr
-                LOGGER.info(f"Extracting feature from image No. {curr} , {total} images in total")
+                feat = model.extract_feat(None, img_file)
+                feats.append(feat.reshape(-1).cpu().numpy())
+                names.append(img_file.encode(encoding='utf-8'))
+                cache['current'] = i + 1
+                LOGGER.info(f"Extracting feature from image No. {i + 1} , {total} images in total")
             except Exception as e:
-                LOGGER.error(f"Error with extracting feature from image {e}")
+                LOGGER.error(e)
+                cache['total'] -= 1
+                total -= 1
                 continue
         return feats, names
     except Exception as e:
