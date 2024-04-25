@@ -134,3 +134,4 @@ model/
 volumes/
 tmp/
 *.pt
+.DS_Store
