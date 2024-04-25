@@ -196,6 +196,7 @@ const Setting = (props: any) => {
     },
     false
   );
+
   const _search = ({ topK, image, textQuery }: any) => {
     const fd = new FormData();
     fd.set("topk", topK);
@@ -244,33 +245,34 @@ const Setting = (props: any) => {
     setImage();
   }
 
-  const _keepProcess = () => {
-    process().then((res: any) => {
-      const { data, status } = res;
-      if (status === 200) {
-        const [_current, _total] = data
-          .split(",")
-          .map((item: any) => Number.parseInt(item.split(":")[1]));
-        setProcessedNum([_current, _total]);
-        if (_current !== _total && loading ) {
-          setTimeout(() => _keepProcess(), 1000);
-        } else {
-          setTimeout(() => {
-            count().then((res: any) => {
-              const { data, status } = res;
-              if (status === 200) {
-                setTotalNum(data);
-                setLoading(false);
-              }
-            });
-          }, 3000);
-        }
-      }
-    });
-  };
+  // const _keepProcess = () => {
+  //   process().then((res: any) => {
+  //     const { data, status } = res;
+  //     if (status === 200) {
+  //       const [_current, _total] = data
+  //         .split(",")
+  //         .map((item: any) => Number.parseInt(item.split(":")[1]));
+  //       setProcessedNum([_current, _total]);
+  //       if (_current !== _total && loading ) {
+  //         setTimeout(() => _keepProcess(), 1000);
+  //       } else {
+  //         setTimeout(() => {
+  //           count().then((res: any) => {
+  //             const { data, status } = res;
+  //             if (status === 200) {
+  //               setTotalNum(data);
+  //               setLoading(false);
+  //             }
+  //           });
+  //         }, 3000);
+  //       }
+  //     }
+  //   });
+  // };
+  
   const uploadImgPath = () => {
     setLoading(true);
-    train({ File: inputs }).then((res: any) => {setInputs(""); setLoading(false);});
+    train({ File: inputs }).then((res: any) => {setInputs(""); setLoading(false); countImages()});
   };
 
   const clear = () => {
@@ -284,14 +286,17 @@ const Setting = (props: any) => {
     });
   };
 
-  useEffect(() => {
+  const countImages = () => {
     count().then((res: any) => {
       const { data, status } = res || {};
       if (status === 200) {
         setTotalNum(data);
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }
+
+  useEffect(() => {
+    countImages();
   }, []);
 
   return (
@@ -309,7 +314,7 @@ const Setting = (props: any) => {
       <SeperatLine title={`Set up image set`} style={{ marginBottom: "0px" }} />
       <div className={classes.imageSet}>
         <div className={classes.counts}>
-          <p style={{ color: loading ? baseColor : "#808A87" }}>{setText}</p>
+          <p style={{ color:  "#808A87" }}>{setText}</p>
           {/* <h3 className={classes.currTotal}>{`${current}/${total}`}</h3> */}
           {/* <h3 className={classes.currTotal}>{loading ? "Loading..." : "Done"}</h3> */}
         </div>
@@ -355,7 +360,7 @@ const Setting = (props: any) => {
         </div>
         <SeperatLine title={`Query Setting`} style={{ marginBottom: "15px" }} />
         <div className={classes.counts}>
-          <p style={{ color: loading ? baseColor : "#808A87" }}>{`Show top ${topK} results`}</p>
+          <p style={{ color: "#808A87" }}>{`Show top ${topK} results`}</p>
         </div>
         <Slider
           min={1}

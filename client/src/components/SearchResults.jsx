@@ -59,8 +59,7 @@ const SearchResults = props => {
                 {photos.length !== 0 && (
                     <p className={classes.subTitle}>
                         hover on the image to see{" "}
-                        <span style={{color: baseColor}}>distance</span>(smaller value
-                        represents higher simlarity); click to see the full image
+                        <span style={{color: baseColor}}>simlarity</span>; click to see the full image
                     </p>
                 )}
             </div>
