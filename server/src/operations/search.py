@@ -14,7 +14,6 @@ def do_search(table_name: str, text_query: str, img_path: str, top_k: int, model
         vectors = milvus_client.search_vectors(table_name, [feat.reshape(-1).cpu().numpy()], top_k)
         vids = [str(x.id) for x in vectors[0]]
         paths = mysql_cli.search_by_milvus_ids(vids, table_name)
-        LOGGER.info(str(len(paths)))
         distances = [x.distance for x in vectors[0]]
         return paths, distances
     except Exception as e:

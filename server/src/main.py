@@ -98,7 +98,7 @@ async def upload_images(image: UploadFile = File(None), url: str = None, table_n
 
 
 @app.post('/img/search')
-async def search_images(image: Optional[UploadFile] = None, text_query: str = Form(''), topk: int = Form(TOP_K), table_name: str = None):
+async def search_images(image: UploadFile = File(None), text_query: str = Form(''), topk: int = Form(TOP_K), table_name: str = None):
     # Search the upload image in Milvus/MySQL
     try:
         # Save the upload image to server.
