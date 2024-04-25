@@ -52,17 +52,18 @@ const DrawingBoard = ({ onUpload }) => {
             }
         }, "image/png");
         // setImage(dataURL); // 将绘制的图片路径传递给 uploadImg 函数
-        clearCanvas(); // 清空画板
     };
 
     return (
-        <div style={{ marginTop: "20px", textAlign: "center" }}>
-            {/*<div style={{ marginTop: "10px" }}>*/}
-            {/*    <h4 className={classes.config}>Config</h4>*/}
-            {/*    <h4 className={classes.clear} onClick={clear}>*/}
-            {/*        CLEAR ALL*/}
-            {/*    </h4>*/}
-            {/*</div>*/}
+        <div style={{textAlign: "center"}}>
+            <canvas
+                ref={canvasRef}
+                onMouseDown={startDrawing}
+                onMouseMove={draw}
+                onMouseUp={endDrawing}
+                onMouseOut={endDrawing}
+                style={{width: "390px", height: "300px", border: "1px solid black", backgroundColor: "#CCE8CF", borderRadius: "10px"}}
+            ></canvas>
             <div style={{ marginTop: "10px" }}>
                 <Fab color="primary" onClick={uploadDrawing} style={{ width: "40px", height: "40px", marginBottom: "10px", marginLeft: "200px", backgroundColor: "#6B8E23" }}>
                     <SendIcon />
@@ -71,16 +72,6 @@ const DrawingBoard = ({ onUpload }) => {
                     <CloseIcon />
                 </Fab>
             </div>
-            <canvas
-                ref={canvasRef}
-                onMouseDown={startDrawing}
-                onMouseMove={draw}
-                onMouseUp={endDrawing}
-                onMouseOut={endDrawing}
-                width={400}
-                height={300}
-                style={{ border: "1px solid black", backgroundColor: "#CCE8CF" }}
-            ></canvas>
         </div>
     );
 };

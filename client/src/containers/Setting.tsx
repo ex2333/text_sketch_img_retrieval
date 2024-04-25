@@ -144,8 +144,8 @@ const Setting = (props: any) => {
       },
       dropzoneContainer: {
         backgroundColor: "transparent",
-        width: "400px",
-        height: "250px",
+        width: "390px",
+        height: "300px",
         borderRadius: "10px",
         border: "solid .5px #C8C8C8",
         display: "flex",
@@ -242,6 +242,7 @@ const Setting = (props: any) => {
 
   const onSwitchClick = () => {
     setIfUpload(!ifUpload);
+    setImage();
   }
 
   const _keepProcess = () => {
@@ -313,7 +314,7 @@ const Setting = (props: any) => {
           CLEAR ALL
         </h4>
       </div>
-      <SeperatLine title={`Module 1: Set up image set`} style={{ marginBottom: "20px" }} />
+      <SeperatLine title={`Set up image set`} style={{ marginBottom: "20px" }} />
       <div className={classes.imageSet}>
         <div className={classes.counts}>
           <p style={{ color: loading ? baseColor : "#808A87" }}>{setText}</p>
@@ -359,10 +360,7 @@ const Setting = (props: any) => {
             />
           </Fab>
         </div>
-        <SeperatLine title={`Module 2: Set top K(1－100)`} style={{ marginBottom: "20px" }} />
-        <div className={classes.counts}>
-          <p>{`Show top ${topK} results`}</p>
-        </div>
+        <SeperatLine title={`Show top ${topK} results`} style={{ marginBottom: "20px" }} />
         <Slider
           min={1}
           max={100}
@@ -376,7 +374,7 @@ const Setting = (props: any) => {
           }}
         />
       </div>
-      <SeperatLine title={`Module 3: Query content`} style={{ marginBottom: "30px" }} />
+      <SeperatLine title={`Query content`} style={{ marginBottom: "30px" }} />
       <div style={{textAlign: "center"}}>
         <Fab
               classes={{
@@ -434,13 +432,7 @@ const Setting = (props: any) => {
       </div>
       <div className={classes.upload} style={{ display: "flex", flexDirection: "column" }}>
         <div>
-          <div className={classes.counts}>
-            <p>{`Below is the drawing board:`}</p>
-          </div>
-          <DrawingBoard onUpload={onImgUpload} />
-        </div>
-        <div>
-          {image ? (
+          {image && ifUpload ? (
               <div className={classes.benchImage}>
                 <img
                     ref={benchImage}
