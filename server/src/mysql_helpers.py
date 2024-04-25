@@ -29,7 +29,7 @@ class MySQLHelper():
     def create_mysql_table(self, table_name):
         # Create mysql table if not exists
         self.test_connection()
-        sql = "create table if not exists " + table_name + "(milvus_id TEXT, image_path TEXT);"
+        sql = "create table if not exists " + table_name + "(milvus_id TEXT, image_path TEXT CHARACTER SET utf8mb4);"
         try:
             self.cursor.execute(sql)
             LOGGER.debug(f"MYSQL create table: {table_name} with sql: {sql}")

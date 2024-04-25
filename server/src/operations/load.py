@@ -1,5 +1,6 @@
 import sys
 import os
+import os.path as osp
 from diskcache import Cache
 from config import DEFAULT_TABLE, BATCH_SIZE, DEVICE
 from logs import LOGGER
@@ -9,6 +10,7 @@ from encode import TaskFormer
 
 from torch.utils.data import Dataset, DataLoader
 from PIL import Image
+import cv2
 
 
 class ImgDataBase(Dataset):
@@ -18,17 +20,24 @@ class ImgDataBase(Dataset):
         self.transformers = transformers
         for root, dirs, files in os.walk(img_dir):
             for f in files:
-                if ((f.endswith(extension) for extension in ['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG']) and not f.startswith('.DS_Store')):
+                extension = osp.splitext(f)[-1]
+                if (extension in ['.png', '.jpg', '.jpeg', 'jPNG', '.JPG', '.JPEG'] and not f.startswith('.DS_Store')):
                     self.img_files.append(os.path.join(root, f))
-        self.img_files.sort()
+        self.img_files = sorted(self.img_files)
+        self.files_iter = iter(self.img_files)
 
     def __len__(self):
         return len(self.img_files)
 
     def __getitem__(self, index):
-        img_file = self.img_files[index]
+        img_file = next(self.files_iter)
         img = Image.open(img_file)
-        return self.transformers(img), img_file
+        try:
+            img = self.transformers(img)
+        except Exception as e:
+            LOGGER.error(f"{img_file}: {e}")
+            return self.__getitem__(index)
+        return img, img_file
 
 
 # Get the path to the image
@@ -36,7 +45,8 @@ def get_imgs(path):
     pics = []
     for root, dirs, files in os.walk(path):
         for f in files:
-            if ((f.endswith(extension) for extension in ['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG']) and not f.startswith('.DS_Store')):
+            extension = osp.splitext(f)[-1]
+            if (extension in ['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG'] and not f.startswith('.DS_Store')):
                 pics.append(os.path.join(root, f))
 
     return pics
@@ -65,11 +75,12 @@ def extract_features(img_dir, model):
                 imgs, img_paths = batch
                 feas = model.extract_database_feat(imgs.to(DEVICE))
                 feas = feas.cpu().numpy()
-                for f, p in zip(feas, img_paths):
+                for j, (f, p) in enumerate(zip(feas, img_paths)):
                     feats.append(f.reshape(-1))
                     names.append(p.encode())
-                cache['current'] = (i + 1) * imgs.shape[0]
-                LOGGER.info(f"Extracting feature from image No. {(i + 1) * imgs.shape[0]} , {total} images in total")
+                    curr = i * BATCH_SIZE + j
+                    cache['current'] = curr
+                LOGGER.info(f"Extracting feature from image No. {curr} , {total} images in total")
             except Exception as e:
                 LOGGER.error(f"Error with extracting feature from image {e}")
                 continue
@@ -93,6 +104,7 @@ def do_load(table_name: str, image_dir: str, model: TaskFormer, milvus_client: M
         milvus_client.create_collection(table_name)
         milvus_client.create_index(table_name)
     vectors, names = extract_features(image_dir, model)
+    print(len(vectors))
     ids = milvus_client.insert(table_name, vectors)
     mysql_cli.create_mysql_table(table_name)
     mysql_cli.load_data_to_mysql(table_name, format_data(ids, names))

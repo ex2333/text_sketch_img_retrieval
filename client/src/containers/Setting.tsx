@@ -228,9 +228,9 @@ const Setting = (props: any) => {
 
   const onTopKChange = (e: any, val: any) => {
     setTopK(val);
-    if (val && image) {
-      delayRunFunc({ topK: val, image, text_query: textQuery}, _search, 300);
-    }
+    // if (val && image) {
+    //   delayRunFunc({ topK: val, image, text_query: textQuery}, _search, 300);
+    // }
   };
   const _keepProcess = () => {
     process().then((res: any) => {

@@ -90,7 +90,7 @@ $ sudo docker-compose up -d
 There are several ways to start Mysql. One option is using docker to create a container:
 
 ```bash
-$ docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d --name image_search_mysql mysql:5.7
+$ docker run -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d --name image_search_mysql mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci 
 ```
 
 ### 2. Start API Server
