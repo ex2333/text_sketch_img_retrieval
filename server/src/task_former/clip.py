@@ -60,11 +60,20 @@ def _download(url: str, root: str = os.path.expanduser("~/.cache/clip")):
 def _convert_to_rgb(image):
     return image.convert('RGB')
 
+def _add_background(img):
+    width = img.width
+    height = img.height
+
+    image = Image.new('RGBA', size=(width, height), color=(255, 255, 255, 255))
+    image.paste(img, (0, 0))
+    return image
+
 def _transform(n_px: int, is_train: bool, affine: bool = False):
     normalize = Normalize((0.48145466, 0.4578275, 0.40821073), (0.26862954, 0.26130258, 0.27577711))
     if is_train:
         if affine:
             return Compose([
+                _add_background,
                 RandomAffine(degrees=30,translate=(0.3,0.3),shear =[-30,30,-30,30], scale=(1,2), fill=255, interpolation=Image.BICUBIC),
                 RandomResizedCrop(n_px, scale=(0.8, 1.0), interpolation=Image.BICUBIC),
                 _convert_to_rgb,
@@ -73,6 +82,7 @@ def _transform(n_px: int, is_train: bool, affine: bool = False):
             ])
         else:
             return Compose([
+                _add_background,
                 RandomResizedCrop(n_px, scale=(0.9, 1.0), interpolation=Image.BICUBIC),
                 _convert_to_rgb,
                 ToTensor(),
@@ -80,6 +90,7 @@ def _transform(n_px: int, is_train: bool, affine: bool = False):
             ])
     else:
         return Compose([
+            _add_background,
             Resize(n_px, interpolation=Image.BICUBIC),
             CenterCrop(n_px),
             _convert_to_rgb,

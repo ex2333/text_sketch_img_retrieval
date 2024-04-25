@@ -1,5 +1,6 @@
 import uvicorn
 import os
+import os.path as osp
 from diskcache import Cache
 from fastapi import FastAPI, File, UploadFile
 from fastapi.param_functions import Form
@@ -50,11 +51,11 @@ def get_img(image_path):
 
 
 @app.get('/progress')
-def get_progress():
+async def get_progress():
     # Get the progress of dealing with images
     try:
         cache = Cache('./tmp')
-        return f"current: {cache['current']}, total: {cache['total']}"
+        return (cache['current'], cache['total']), 200
     except Exception as e:
         LOGGER.error(f"upload image error: {e}")
         return {'status': False, 'msg': e}, 400
@@ -105,7 +106,9 @@ async def search_images(image: UploadFile = File(None), text_query: str = Form('
         LOGGER.info(str(image))
         if image is not None:
             content = await image.read()
-            img_path = os.path.join(UPLOAD_PATH, image.filename)
+            name, ext = osp.splitext(image.filename)
+            filename = name + (ext if ext != '' else '.png')
+            img_path = os.path.join(UPLOAD_PATH, filename)
             with open(img_path, "wb+") as f:
                 f.write(content)
         else:
@@ -114,10 +117,10 @@ async def search_images(image: UploadFile = File(None), text_query: str = Form('
         paths, distances = do_search(table_name, text_query, img_path, topk, MODEL, MILVUS_CLI, MYSQL_CLI)
         res = dict(zip(paths, distances))
         res = sorted(res.items(), key=lambda item: item[1], reverse=True)
-        LOGGER.info(f"Search images use text: {text_query} and image: {img_path}")
+        LOGGER.info(f"Search images use text: '{text_query}' and image: '{img_path}'")
 
-        if img_path:
-            os.remove(img_path)
+        # if img_path:
+        #     os.remove(img_path)
         return res
     except Exception as e:
         LOGGER.error(e)
