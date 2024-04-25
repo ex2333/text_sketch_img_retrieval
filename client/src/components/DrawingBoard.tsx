@@ -57,6 +57,20 @@ const DrawingBoard = ({ onUpload }) => {
 
     return (
         <div style={{ marginTop: "20px", textAlign: "center" }}>
+            {/*<div style={{ marginTop: "10px" }}>*/}
+            {/*    <h4 className={classes.config}>Config</h4>*/}
+            {/*    <h4 className={classes.clear} onClick={clear}>*/}
+            {/*        CLEAR ALL*/}
+            {/*    </h4>*/}
+            {/*</div>*/}
+            <div style={{ marginTop: "10px" }}>
+                <Fab color="primary" onClick={uploadDrawing} style={{ width: "40px", height: "40px", marginBottom: "10px", marginLeft: "200px", backgroundColor: "#6B8E23" }}>
+                    <SendIcon />
+                </Fab>
+                <Fab color="secondary" onClick={clearCanvas} style={{ width: "40px", height: "40px", marginBottom: "10px", marginLeft: "20px", backgroundColor: "#BC8F8F" }}>
+                    <CloseIcon />
+                </Fab>
+            </div>
             <canvas
                 ref={canvasRef}
                 onMouseDown={startDrawing}
@@ -65,16 +79,8 @@ const DrawingBoard = ({ onUpload }) => {
                 onMouseOut={endDrawing}
                 width={400}
                 height={300}
-                style={{ border: "1px solid black" }}
+                style={{ border: "1px solid black", backgroundColor: "#CCE8CF" }}
             ></canvas>
-            <div style={{ marginTop: "10px" }}>
-                <Fab color="primary" onClick={uploadDrawing} style={{ marginRight: "10px" }}>
-                    <SendIcon />
-                </Fab>
-                <Fab color="secondary" onClick={clearCanvas}>
-                    <CloseIcon />
-                </Fab>
-            </div>
         </div>
     );
 };

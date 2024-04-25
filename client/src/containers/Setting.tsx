@@ -54,8 +54,9 @@ const Setting = (props: any) => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: "30px",
-        color: "#FAFAFA",
+        marginTop: "20px",
+        marginBottom: "10px",
+        color: "#808A87",
       },
       currTotal: {
         fontSize: "12px",
@@ -142,7 +143,7 @@ const Setting = (props: any) => {
       },
       dropzoneContainer: {
         backgroundColor: "transparent",
-        width: "90%",
+        width: "400px",
         height: "250px",
         borderRadius: "10px",
         border: "solid .5px #C8C8C8",
@@ -153,7 +154,7 @@ const Setting = (props: any) => {
       dropzoneText: {
         fontSize: "14px",
         color: "#B3B4B5",
-        marginBottom: "30px",
+        marginBottom: "10px",
       },
       notchedOutline: {
         borderWidth: ".5px",
@@ -302,10 +303,10 @@ const Setting = (props: any) => {
           CLEAR ALL
         </h4>
       </div>
-      <SeperatLine title={`IMAGE SET`} style={{ marginBottom: "20px" }} />
+      <SeperatLine title={`Module 1: Set up image set`} style={{ marginBottom: "20px" }} />
       <div className={classes.imageSet}>
         <div className={classes.counts}>
-          <p style={{ color: loading ? baseColor : "#fff" }}>{setText}</p>
+          <p style={{ color: loading ? baseColor : "#808A87" }}>{setText}</p>
           <h3 className={classes.currTotal}>{`${current}/${total}`}</h3>
         </div>
         <div className={classes.setPath}>
@@ -348,9 +349,9 @@ const Setting = (props: any) => {
             />
           </Fab>
         </div>
-        <SeperatLine title={`TOP K(1－100)`} style={{ marginBottom: "20px" }} />
+        <SeperatLine title={`Module 2: Set top K(1－100)`} style={{ marginBottom: "20px" }} />
         <div className={classes.counts}>
-          <p>{`show top ${topK} results`}</p>
+          <p>{`Show top ${topK} results`}</p>
         </div>
         <Slider
           min={1}
@@ -365,7 +366,7 @@ const Setting = (props: any) => {
           }}
         />
       </div>
-      <SeperatLine title={`ORIGINAL IMAGE`} style={{ marginBottom: "30px" }} />
+      <SeperatLine title={`Module 3: Query content`} style={{ marginBottom: "30px" }} />
       <div style={{textAlign: "center"}}>
         <Fab
               classes={{
@@ -409,6 +410,12 @@ const Setting = (props: any) => {
       </div>
       <div className={classes.upload} style={{ display: "flex", flexDirection: "column" }}>
         <div>
+          <div className={classes.counts}>
+            <p>{`Below is the drawing board:`}</p>
+          </div>
+          <DrawingBoard onUpload={onImgUpload} />
+        </div>
+        <div>
           {image ? (
               <div className={classes.benchImage}>
                 <img
@@ -444,9 +451,6 @@ const Setting = (props: any) => {
                   // maxFileSize={} bit
               />
           )}
-        </div>
-        <div>
-          <DrawingBoard onUpload={onImgUpload} />
         </div>
       </div>
     </div>

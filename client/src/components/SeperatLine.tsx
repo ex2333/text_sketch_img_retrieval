@@ -7,8 +7,8 @@ const SeperatLine = (props: any) => {
       style={{
         display: "flex",
         justifyContent: "space-between",
-        color: "rgba(176,176,185,0.75)",
-        marginBottom:"10px",
+        color: "rgba(251,255,242,1)",
+        marginBottom:"20px",
         ...style,
       }}
     >
@@ -26,8 +26,8 @@ const SeperatLine = (props: any) => {
           style={{
             width: "100%",
             border: "none",
-            height: "1px",
-            backgroundColor: "rgba(176,176,185,0.75)"
+            height: "2px",
+            backgroundColor: "rgba(251,255,242, 1)"
           }}
         />
       </div>
