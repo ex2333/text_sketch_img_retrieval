@@ -54,7 +54,7 @@ const Setting = (props: any) => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        marginTop: "20px",
+        marginTop: "15px",
         marginBottom: "10px",
         color: "#808A87",
       },
@@ -314,7 +314,7 @@ const Setting = (props: any) => {
           CLEAR ALL
         </h4>
       </div>
-      <SeperatLine title={`Set up image set`} style={{ marginBottom: "20px" }} />
+      <SeperatLine title={`Set up image set`} style={{ marginBottom: "0px" }} />
       <div className={classes.imageSet}>
         <div className={classes.counts}>
           <p style={{ color: loading ? baseColor : "#808A87" }}>{setText}</p>
@@ -360,7 +360,10 @@ const Setting = (props: any) => {
             />
           </Fab>
         </div>
-        <SeperatLine title={`Show top ${topK} results`} style={{ marginBottom: "20px" }} />
+        <SeperatLine title={`Query Setting`} style={{ marginBottom: "15px" }} />
+        <div className={classes.counts}>
+          <p style={{ color: loading ? baseColor : "#808A87" }}>{`Show top ${topK} results`}</p>
+        </div>
         <Slider
           min={1}
           max={100}
@@ -372,9 +375,9 @@ const Setting = (props: any) => {
             rail: classes.track,
             thumb: classes.thumb,
           }}
+          style={{marginBottom: "10px"}}
         />
       </div>
-      <SeperatLine title={`Query content`} style={{ marginBottom: "30px" }} />
       <div style={{textAlign: "center"}}>
         <Fab
               classes={{
@@ -430,7 +433,7 @@ const Setting = (props: any) => {
             Switch
           </Fab>
       </div>
-      <div className={classes.upload} style={{ display: "flex", flexDirection: "column" }}>
+      <div className={classes.upload} style={{ display: "flex", flexDirection: "column"}}>
         <div>
           {image && ifUpload ? (
               <div className={classes.benchImage}>
