@@ -98,20 +98,25 @@ async def upload_images(image: UploadFile = File(None), url: str = None, table_n
 
 
 @app.post('/img/search')
-async def search_images(image: UploadFile = File(...), text_query: str = Form(''), topk: int = Form(TOP_K), table_name: str = None):
+async def search_images(image: Optional[UploadFile] = None, text_query: str = Form(''), topk: int = Form(TOP_K), table_name: str = None):
     # Search the upload image in Milvus/MySQL
     try:
         # Save the upload image to server.
-        content = await image.read()
-        img_path = os.path.join(UPLOAD_PATH, image.filename)
-        with open(img_path, "wb+") as f:
-            f.write(content)
+        if image is not None:
+            content = await image.read()
+            img_path = os.path.join(UPLOAD_PATH, image.filename)
+            with open(img_path, "wb+") as f:
+                f.write(content)
+        else:
+            img_path = None
         text_query = None if len(text_query) == 0 else text_query
         paths, distances = do_search(table_name, text_query, img_path, topk, MODEL, MILVUS_CLI, MYSQL_CLI)
         res = dict(zip(paths, distances))
         res = sorted(res.items(), key=lambda item: item[1], reverse=True)
         LOGGER.info(f"Search images use text: {text_query} and image: {img_path}")
-        os.remove(img_path)
+
+        if img_path:
+            os.remove(img_path)
         return res
     except Exception as e:
         LOGGER.error(e)

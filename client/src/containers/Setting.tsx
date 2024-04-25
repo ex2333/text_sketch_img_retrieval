@@ -196,7 +196,7 @@ const Setting = (props: any) => {
   const _search = ({ topK, image, textQuery }: any) => {
     const fd = new FormData();
     fd.set("topk", topK);
-    fd.append("image", image);
+    fd.append("image", image ? image : "");
     fd.set("text_query", textQuery)
     search(fd).then((res: any) => {
       const { status, data } = res || {};
