@@ -103,7 +103,6 @@ async def search_images(image: UploadFile = File(None), text_query: str = Form('
     # Search the upload image in Milvus/MySQL
     try:
         # Save the upload image to server.
-        LOGGER.info(str(image))
         if image is not None:
             content = await image.read()
             name, ext = osp.splitext(image.filename)
@@ -119,8 +118,8 @@ async def search_images(image: UploadFile = File(None), text_query: str = Form('
         res = sorted(res.items(), key=lambda item: item[1], reverse=True)
         LOGGER.info(f"Search images use text: '{text_query}' and image: '{img_path}'")
 
-        # if img_path:
-        #     os.remove(img_path)
+        if img_path:
+            os.remove(img_path)
         return res
     except Exception as e:
         LOGGER.error(e)
