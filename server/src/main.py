@@ -102,6 +102,7 @@ async def search_images(image: Optional[UploadFile] = None, text_query: str = Fo
     # Search the upload image in Milvus/MySQL
     try:
         # Save the upload image to server.
+        LOGGER.info(str(image))
         if image is not None:
             content = await image.read()
             img_path = os.path.join(UPLOAD_PATH, image.filename)
