@@ -73,8 +73,9 @@ const Setting = (props: any) => {
         width: isMobile ? "80%" : "auto",
       },
       textQueryInput: {
+        margin: "0 15px 0 0 !important",
         color: "blue !important",
-        width: "90%",
+        width: "100%",
       },
       customFab: {
         color: "#fff",
@@ -88,7 +89,7 @@ const Setting = (props: any) => {
       submitFab: {
         color: "#fff",
         backgroundColor: baseColor,
-        width:  "90%",
+        width:  "97%",
         height: "36px",
         "&:hover": {
           backgroundColor: baseColor,
@@ -177,6 +178,7 @@ const Setting = (props: any) => {
   const [totalNum, setTotalNum]: any = useState(0);
   const [[current, total], setProcessedNum]: any = useState([0, 0]);
   const [image, setImage]: any = useState();
+  const [ifUpload, setIfUpload]: any = useState(false);
 
   const benchImage = useRef<any>(null);
   const setText = loading
@@ -236,10 +238,12 @@ const Setting = (props: any) => {
 
   const onTopKChange = (e: any, val: any) => {
     setTopK(val);
-    // if (val && image) {
-    //   delayRunFunc({ topK: val, image, text_query: textQuery}, _search, 300);
-    // }
   };
+
+  const onSwitchClick = () => {
+    setIfUpload(!ifUpload);
+  }
+
   const _keepProcess = () => {
     process().then((res: any) => {
       const { data, status } = res;
@@ -388,6 +392,7 @@ const Setting = (props: any) => {
       <div className={classes.setPath} style={{justifyContent: "center", marginBottom: "30px"}}>
           <TextField
             classes={{ root: classes.textQueryInput }}
+            style={{width: "70%"}}
             label=""
             variant="outlined"
             value={textQuery}
@@ -414,21 +419,17 @@ const Setting = (props: any) => {
             }}
           />
           <Fab
-            // classes={{
-            //     root: classes.submitFab,
-            //     focusVisible: classes.submitFab,
-            //   }}
               style={{
                 color: "#fff",
-                backgroundColor: baseColor,
-                width:  "30%",
+                backgroundColor: "gray",
+                width:  "20%",
                 height: "36px",
-                // marginBottom: "20px",
+                marginRight: "10px"
               }}
               variant="extended"
-            // onClick={}
+              onClick={onSwitchClick}
           >
-            Draw/Upload
+            Switch
           </Fab>
       </div>
       <div className={classes.upload} style={{ display: "flex", flexDirection: "column" }}>
@@ -462,7 +463,7 @@ const Setting = (props: any) => {
                   />
                 </Fab>
               </div>
-          ) : (
+          ) : ifUpload ? (
               <DropzoneArea
                   acceptedFiles={["image/*"]}
                   filesLimit={1}
@@ -473,10 +474,9 @@ const Setting = (props: any) => {
                   dropzoneParagraphClass={classes.dropzoneText}
                   // maxFileSize={} bit
               />
+          ): (
+            <DrawingBoard onUpload={onSketchUpload} />
           )}
-        </div>
-        <div>
-          <DrawingBoard onUpload={onSketchUpload} />
         </div>
       </div>
     </div>
