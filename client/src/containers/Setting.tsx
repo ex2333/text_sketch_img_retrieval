@@ -11,7 +11,6 @@ import { DropzoneArea } from "material-ui-dropzone";
 import SeperatLine from "../components/SeperatLine";
 import { baseColor } from "../utils/color";
 import Logo from "./Logo.svg";
-// import { delayRunFunc } from "../utils/Helper";
 import DrawingBoard from "../components/DrawingBoard"; // 导入手绘组件
 
 const Setting = (props: any) => {
@@ -253,7 +252,7 @@ const Setting = (props: any) => {
           .split(",")
           .map((item: any) => Number.parseInt(item.split(":")[1]));
         setProcessedNum([_current, _total]);
-        if (_current !== _total) {
+        if (_current !== _total && loading ) {
           setTimeout(() => _keepProcess(), 1000);
         } else {
           setTimeout(() => {
@@ -270,15 +269,8 @@ const Setting = (props: any) => {
     });
   };
   const uploadImgPath = () => {
-    train({ File: inputs }).then((res: any) => {
-      if (res.status === 200) {
-        setLoading(true);
-        setTimeout(() => {
-          setInputs("");
-          _keepProcess();
-        }, 1000);
-      }
-    });
+    setLoading(true);
+    train({ File: inputs }).then((res: any) => {setInputs(""); setLoading(false);});
   };
 
   const clear = () => {
@@ -318,7 +310,8 @@ const Setting = (props: any) => {
       <div className={classes.imageSet}>
         <div className={classes.counts}>
           <p style={{ color: loading ? baseColor : "#808A87" }}>{setText}</p>
-          <h3 className={classes.currTotal}>{`${current}/${total}`}</h3>
+          {/* <h3 className={classes.currTotal}>{`${current}/${total}`}</h3> */}
+          {/* <h3 className={classes.currTotal}>{loading ? "Loading..." : "Done"}</h3> */}
         </div>
         <div className={classes.setPath}>
           <TextField
@@ -467,7 +460,6 @@ const Setting = (props: any) => {
                   dropzoneClass={classes.dropzoneContainer}
                   showPreviewsInDropzone={false}
                   dropzoneParagraphClass={classes.dropzoneText}
-                  // maxFileSize={} bit
               />
           ): (
             <DrawingBoard onUpload={onSketchUpload} />
