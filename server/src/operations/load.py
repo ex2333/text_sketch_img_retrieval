@@ -8,7 +8,7 @@ from milvus_helpers import MilvusHelper
 from mysql_helpers import MySQLHelper
 from encode import TaskFormer
 
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, default_collate
 from PIL import Image
 
 
@@ -18,20 +18,24 @@ class ImgDataBase(Dataset):
         self.img_files = get_imgs(img_dir)
         self.transformers = transformers
         self.img_files = sorted(self.img_files)
-        self.files_iter = iter(self.img_files)
 
     def __len__(self):
         return len(self.img_files)
 
     def __getitem__(self, index):
-        img_file = next(self.files_iter)
+        img_file = self.img_files[index]
         img = Image.open(img_file)
         try:
             img = self.transformers(img)
         except Exception as e:
             LOGGER.error(f"{img_file}: {e}")
-            return self.__getitem__(index)
+            return None
         return img, img_file
+
+
+def collate_fn(batch):
+    batch = list(filter(lambda x: x is not None, batch))
+    return default_collate(batch)
 
 
 # Get the path to the image
@@ -42,7 +46,6 @@ def get_imgs(path):
             extension = osp.splitext(f)[-1]
             if (extension in ['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG'] and not f.startswith('.DS_Store')):
                 pics.append(os.path.join(root, f))
-
     return pics
 
 
@@ -74,6 +77,7 @@ def extract_features(img_dir, model: TaskFormer):
             dataloader = DataLoader(
                 dataset,
                 batch_size=BATCH_SIZE,
+                collate_fn=collate_fn,
                 shuffle=False,
                 num_workers=NUM_WORKERS,
                 pin_memory=True,
@@ -115,14 +119,7 @@ def do_load(table_name: str, image_dir: str, model: TaskFormer, milvus_client: M
         milvus_client.create_index(table_name)
     mysql_cli.create_mysql_table(table_name)
     vectors, names = extract_features(image_dir, model)
-    print(len(names), len(set(names)))
-    input()
-    total = 0
-    for v, n in zip(vectors, names):
-        # if mysql_cli.if_exist(table_name, n):
-        #     continue
-        # else:
-        id_ = milvus_client.insert(table_name, [v])[0]
-        mysql_cli.load_data_to_mysql(table_name, format_data([id_], [n]))
-        total += 1
-    return total
+    ids = milvus_client.insert(table_name, vectors)
+    mysql_cli.create_mysql_table(table_name)
+    mysql_cli.load_data_to_mysql(table_name, format_data(ids, names))
+    return len(ids)
