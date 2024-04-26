@@ -22,21 +22,8 @@ const App: React.FC = () => {
   return (
     <QueryProvider>
       <div className={classes.root}>
-        <Setting setImages={setImages} setLoading={setLoading} />
-        <SearchResults images={images} />
-        {loading && (
-          <div
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              left: "0",
-              top: "0",
-              backgroundColor: "#000",
-              opacity: 0.5,
-            }}
-          ></div>
-        )}
+        <Setting setImages={setImages} loading={loading} setLoading={setLoading} isMobile={isMobile}/>
+        <SearchResults images={images} isMobile={isMobile}/>
       </div>
     </QueryProvider>
   );

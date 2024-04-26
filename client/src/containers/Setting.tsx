@@ -14,7 +14,7 @@ import Logo from "./Logo.svg";
 import DrawingBoard from "../components/DrawingBoard"; // 导入手绘组件
 
 const Setting = (props: any) => {
-  const isMobile = !useMediaQuery("(min-width:1000px)");
+  const {setImages, loading, setLoading, isMobile} = props;
   const useStyles = makeStyles((theme: Theme) => {
     return createStyles({
       setting: {
@@ -169,7 +169,6 @@ const Setting = (props: any) => {
     });
   });
   const { process, train, count, search, clearAll } = useContext(queryContext);
-  const { setImages, loading_, setLoading_} = props;
   const classes = useStyles({});
   const [inputs, setInputs]: any = useState("");
   const [textQuery, setTextQuery]: any = useState("");
@@ -178,7 +177,6 @@ const Setting = (props: any) => {
   const [[current, total], setProcessedNum]: any = useState([0, 0]);
   const [image, setImage]: any = useState();
   const [ifUpload, setIfUpload]: any = useState(false);
-  const [loading, setLoading]: any = useState(false);
 
   const benchImage = useRef<any>(null);
   const setText = loading
@@ -361,7 +359,7 @@ const Setting = (props: any) => {
               variant="extended"
               onClick={doSearch}
             >
-              Submit Query
+              Submit Queries
         </Fab>
       </div>
       <div className={classes.setPath} style={{justifyContent: "center", marginBottom: "30px"}}>

@@ -4,6 +4,7 @@ import Carousel, {Modal, ModalGateway} from "react-images";
 import Gallery from "./Gallary";
 import {baseColor} from "../utils/color";
 import {GetImageUrl} from "../utils/Endpoints";
+import { isModifier } from "typescript";
 
 
 const useStyles = makeStyles(theme =>
@@ -32,7 +33,7 @@ const useStyles = makeStyles(theme =>
 
 const SearchResults = props => {
     const classes = useStyles({});
-    const {images = []} = props;
+    const {images = [], isMobile} = props;
     const [currentImage, setCurrentImage] = useState(0);
     const [viewerIsOpen, setViewerIsOpen] = useState(false);
     const photos = images.map(img => {
@@ -53,7 +54,7 @@ const SearchResults = props => {
     };
 
     return (
-        <div className={classes.root}>
+        <div className={classes.root} style={{width : isMobile ? "90%" : "66.6%"}}>
             <div className={classes.title}>
                 <h3 className={classes.title}>Search Results</h3>
                 {photos.length !== 0 && (

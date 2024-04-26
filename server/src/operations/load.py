@@ -52,6 +52,7 @@ def get_imgs(path):
 # Get the vector of images
 def extract_features(img_dir, model: TaskFormer):
     try:
+        LOGGER.info('start to extract features...')
         feats = []
         names = []
         img_files = get_imgs(img_dir)
@@ -68,7 +69,7 @@ def extract_features(img_dir, model: TaskFormer):
                     LOGGER.error(e)
                     total -= 1
                     continue
-                yield feats, names
+            yield feats, names
         else:
             upload_point = INSERT_BATCH_SIZE // BATCH_SIZE
             dataset = ImgDataBase(img_dir, model.img_preprocess)
