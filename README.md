@@ -1,5 +1,3 @@
-模型权重下载：https://patsorn.me/projects/tsbir/data/tsbir_model_final.pt
-
 # Image Retrieval with Text and Sketch
 
 This project uses pytorch to extract image features by [TASK-former](), and uses Milvus to build a system that can perform image retrieval with both a sketch and a text query.
