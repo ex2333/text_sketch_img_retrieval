@@ -4,10 +4,11 @@ import os
 MILVUS_HOST = os.getenv("MILVUS_HOST", "127.0.0.1")
 MILVUS_PORT = int(os.getenv("MILVUS_PORT", "19530"))
 VECTOR_DIMENSION = int(os.getenv("VECTOR_DIMENSION", "512"))
-INDEX_FILE_SIZE = int(os.getenv("INDEX_FILE_SIZE", "1024"))
+INDEX_FILE_SIZE = int(os.getenv("INDEX_FILE_SIZE", "512"))
 METRIC_TYPE = os.getenv("METRIC_TYPE", "IP")
 DEFAULT_TABLE = os.getenv("DEFAULT_TABLE", "ts_search")
 TOP_K = int(os.getenv("TOP_K", "10"))
+INSERT_BATCH_SIZE = int(os.getenv("INSER_BATCH_SIZE", "10240"))
 
 ############### MySQL Configuration ###############
 MYSQL_HOST = os.getenv("MYSQL_HOST", "127.0.0.1")
@@ -25,6 +26,6 @@ LOGS_NUM = int(os.getenv("logs_num", "0"))
 ############### model config file ##########
 MODLE_CONFIG_FILE = 'src/task_former/ViT-B-16.json'
 MODLE_WEIGHT = 'src/task_former/tsbir_model_final.pt'
-BATCH_SIZE = os.getenv("BATCH_SIZE", 128)
+BATCH_SIZE = int(os.getenv("BATCH_SIZE", "128"))
 DEVICE = os.getenv("DEVICE", "cuda")
-NUM_WORKERS = os.getenv('NUM_WORKERS', 4)
+NUM_WORKERS = int(os.getenv('NUM_WORKERS', "4"))

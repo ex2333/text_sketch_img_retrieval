@@ -2,7 +2,7 @@ import sys
 import os
 import os.path as osp
 from diskcache import Cache
-from config import DEFAULT_TABLE, BATCH_SIZE, DEVICE, NUM_WORKERS
+from config import DEFAULT_TABLE, BATCH_SIZE, DEVICE, NUM_WORKERS, INSERT_BATCH_SIZE
 from logs import LOGGER
 from milvus_helpers import MilvusHelper
 from mysql_helpers import MySQLHelper
@@ -52,27 +52,25 @@ def get_imgs(path):
 # Get the vector of images
 def extract_features(img_dir, model: TaskFormer):
     try:
-        cache = Cache('./tmp')
         feats = []
         names = []
         img_files = get_imgs(img_dir)
         total = len(img_files)
-        cache['total'] = total
-        if total < 200:
+        if total < 500:
             for i, img_file in enumerate(img_files):
                 try:
                     img = Image.open(img_file)
                     feat = model.extract_img_feat(img, preprocess=True)
                     feats.append(feat.reshape(-1).cpu().numpy())
                     names.append(img_file.encode())
-                    cache['current'] = i + 1
                     LOGGER.info(f"Extracting feature from image No. {i + 1} , {total} images in total")
                 except Exception as e:
                     LOGGER.error(e)
-                    cache['total'] -= 1
                     total -= 1
                     continue
+                yield feats, names
         else:
+            upload_point = INSERT_BATCH_SIZE // BATCH_SIZE
             dataset = ImgDataBase(img_dir, model.img_preprocess)
             dataloader = DataLoader(
                 dataset,
@@ -84,6 +82,7 @@ def extract_features(img_dir, model: TaskFormer):
                 sampler=None,
                 drop_last=False
             )
+            dataloader_len = len(dataloader)
             for i, batch in enumerate(dataloader):
                 try:
                     imgs, img_paths = batch
@@ -93,12 +92,15 @@ def extract_features(img_dir, model: TaskFormer):
                         feats.append(f.reshape(-1))
                         names.append(p.encode())
                         curr = i * BATCH_SIZE + j
-                        cache['current'] = curr
                     LOGGER.info(f"Extracting feature from image No. {curr} , {total} images in total")
                 except Exception as e:
                     LOGGER.error(f"Error with extracting feature from image {e}")
                     continue
-        return feats, names
+
+                if i == dataloader_len - 1 or i != 0 and i % upload_point == 0:
+                    yield feats, names
+                    feats, names = [], []
+
     except Exception as e:
         LOGGER.error(f"Error with extracting feature from image {e}")
         sys.exit(1)
@@ -118,8 +120,11 @@ def do_load(table_name: str, image_dir: str, model: TaskFormer, milvus_client: M
         milvus_client.create_collection(table_name)
         milvus_client.create_index(table_name)
     mysql_cli.create_mysql_table(table_name)
-    vectors, names = extract_features(image_dir, model)
-    ids = milvus_client.insert(table_name, vectors)
-    mysql_cli.create_mysql_table(table_name)
-    mysql_cli.load_data_to_mysql(table_name, format_data(ids, names))
-    return len(ids)
+
+    total = 0
+    for vectors, names in extract_features(image_dir, model):
+        ids = milvus_client.insert(table_name, vectors)
+        mysql_cli.load_data_to_mysql(table_name, format_data(ids, names))
+        total += len(ids)
+        LOGGER.info(f"load {len(ids)} data...")
+    return total
