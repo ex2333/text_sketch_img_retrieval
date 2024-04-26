@@ -115,6 +115,8 @@ def do_load(table_name: str, image_dir: str, model: TaskFormer, milvus_client: M
         milvus_client.create_index(table_name)
     mysql_cli.create_mysql_table(table_name)
     vectors, names = extract_features(image_dir, model)
+    print(len(names), len(set(names)))
+    input()
     total = 0
     for v, n in zip(vectors, names):
         # if mysql_cli.if_exist(table_name, n):
