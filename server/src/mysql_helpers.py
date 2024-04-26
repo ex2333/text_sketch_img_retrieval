@@ -17,6 +17,16 @@ class MySQLHelper():
                                     database=MYSQL_DB,
                                     local_infile=True)
         self.cursor = self.conn.cursor()
+    
+    def if_exist(self, table_name, name):
+        self.test_connection()
+        try:
+            sql = "select * from " + table_name + " where image_path = '" + name.decode() + "';"
+            self.cursor.execute(sql)
+            res = self.cursor.fetchall()
+            return res == tuple()
+        except Exception as e:
+            LOGGER.error(e)
 
     def test_connection(self):
         try:

@@ -25,5 +25,6 @@ LOGS_NUM = int(os.getenv("logs_num", "0"))
 ############### model config file ##########
 MODLE_CONFIG_FILE = 'src/task_former/ViT-B-16.json'
 MODLE_WEIGHT = 'src/task_former/tsbir_model_final.pt'
-BATCH_SIZE = 32
+BATCH_SIZE = os.getenv("BATCH_SIZE", 128)
 DEVICE = os.getenv("DEVICE", "cuda")
+NUM_WORKERS = os.getenv('NUM_WORKERS', 16)

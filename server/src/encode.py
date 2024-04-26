@@ -4,7 +4,6 @@ from task_former.clip import _transform, tokenize
 from task_former.model import CLIP
 import json
 from config import MODLE_CONFIG_FILE, MODLE_WEIGHT, DEVICE
-from PIL import Image
 
 
 class TaskFormer:
@@ -24,11 +23,18 @@ class TaskFormer:
         self.text_preprocess = tokenize
 
     @torch.no_grad()
-    def extract_feat(self, text=None, sketch_path=None):
-        assert not (text is None and sketch_path is None)
+    def extract_img_feat(self, x, preprocess=True):
+        if preprocess:
+            x = self.img_preprocess(x).unsqueeze(0).to(DEVICE)
+        x = self.model.encode_image(x)
+        x = x / x.norm(dim=-1, keepdim=True)
+        return x
+
+    @torch.no_grad()
+    def extract_query_feat(self, text=None, sketch=None):
+        assert not (text is None and sketch is None)
         sketch_fea, text_fea = 0, 0
-        if sketch_path:
-            sketch = Image.open(sketch_path)
+        if sketch:
             sketch = self.img_preprocess(sketch).unsqueeze(0).to(DEVICE)
             sketch_fea = self.model.encode_sketch(sketch)
             sketch_fea = sketch_fea / sketch_fea.norm(dim=-1, keepdim=True)
@@ -37,12 +43,7 @@ class TaskFormer:
             text_fea = self.model.encode_text(text)
             text_fea = text_fea / text_fea.norm(dim=-1, keepdim=True)
 
-        if text is None or sketch_path is None:
+        if text is None or sketch is None:
             return sketch_fea + text_fea
         else:
             return self.model.feature_fuse(text_fea, sketch_fea)
-
-# if __name__ == '__main__':
-#     MODEL = Resnet50()
-#     # Warm up the model to build image
-#     MODEL.resnet50_extract_feat('https://raw.githubusercontent.com/towhee-io/towhee/main/towhee_logo.png')

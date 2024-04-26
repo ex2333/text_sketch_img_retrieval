@@ -2,7 +2,7 @@ import sys
 import os
 import os.path as osp
 from diskcache import Cache
-from config import DEFAULT_TABLE, BATCH_SIZE, DEVICE
+from config import DEFAULT_TABLE, BATCH_SIZE, DEVICE, NUM_WORKERS
 from logs import LOGGER
 from milvus_helpers import MilvusHelper
 from mysql_helpers import MySQLHelper
@@ -10,19 +10,13 @@ from encode import TaskFormer
 
 from torch.utils.data import Dataset, DataLoader
 from PIL import Image
-import cv2
 
 
 class ImgDataBase(Dataset):
     def __init__(self, img_dir, transformers):
         super().__init__()
-        self.img_files = []
+        self.img_files = get_imgs(img_dir)
         self.transformers = transformers
-        for root, dirs, files in os.walk(img_dir):
-            for f in files:
-                extension = osp.splitext(f)[-1]
-                if (extension in ['.png', '.jpg', '.jpeg', 'jPNG', '.JPG', '.JPEG'] and not f.startswith('.DS_Store')):
-                    self.img_files.append(os.path.join(root, f))
         self.img_files = sorted(self.img_files)
         self.files_iter = iter(self.img_files)
 
@@ -61,18 +55,45 @@ def extract_features(img_dir, model: TaskFormer):
         img_files = get_imgs(img_dir)
         total = len(img_files)
         cache['total'] = total
-        for i, img_file in enumerate(img_files):
-            try:
-                feat = model.extract_feat(None, img_file)
-                feats.append(feat.reshape(-1).cpu().numpy())
-                names.append(img_file.encode(encoding='utf-8'))
-                cache['current'] = i + 1
-                LOGGER.info(f"Extracting feature from image No. {i + 1} , {total} images in total")
-            except Exception as e:
-                LOGGER.error(e)
-                cache['total'] -= 1
-                total -= 1
-                continue
+        if total < 200:
+            for i, img_file in enumerate(img_files):
+                try:
+                    img = Image.open(img_file)
+                    feat = model.extract_img_feat(img, preprocess=True)
+                    feats.append(feat.reshape(-1).cpu().numpy())
+                    names.append(img_file.encode())
+                    cache['current'] = i + 1
+                    LOGGER.info(f"Extracting feature from image No. {i + 1} , {total} images in total")
+                except Exception as e:
+                    LOGGER.error(e)
+                    cache['total'] -= 1
+                    total -= 1
+                    continue
+        else:
+            dataset = ImgDataBase(img_dir, model.img_preprocess)
+            dataloader = DataLoader(
+                dataset,
+                batch_size=BATCH_SIZE,
+                shuffle=False,
+                num_workers=NUM_WORKERS,
+                pin_memory=True,
+                sampler=None,
+                drop_last=False
+            )
+            for i, batch in enumerate(dataloader):
+                try:
+                    imgs, img_paths = batch
+                    feas = model.extract_img_feat(imgs.to(DEVICE), preprocess=False)
+                    feas = feas.cpu().numpy()
+                    for j, (f, p) in enumerate(zip(feas, img_paths)):
+                        feats.append(f.reshape(-1))
+                        names.append(p.encode())
+                        curr = i * BATCH_SIZE + j
+                        cache['current'] = curr
+                    LOGGER.info(f"Extracting feature from image No. {curr} , {total} images in total")
+                except Exception as e:
+                    LOGGER.error(f"Error with extracting feature from image {e}")
+                    continue
         return feats, names
     except Exception as e:
         LOGGER.error(f"Error with extracting feature from image {e}")
@@ -92,9 +113,14 @@ def do_load(table_name: str, image_dir: str, model: TaskFormer, milvus_client: M
     if not milvus_client.has_collection(table_name):
         milvus_client.create_collection(table_name)
         milvus_client.create_index(table_name)
-    vectors, names = extract_features(image_dir, model)
-    print(len(vectors))
-    ids = milvus_client.insert(table_name, vectors)
     mysql_cli.create_mysql_table(table_name)
-    mysql_cli.load_data_to_mysql(table_name, format_data(ids, names))
-    return len(ids)
+    vectors, names = extract_features(image_dir, model)
+    total = 0
+    for v, n in zip(vectors, names):
+        # if mysql_cli.if_exist(table_name, n):
+        #     continue
+        # else:
+        id_ = milvus_client.insert(table_name, [v])[0]
+        mysql_cli.load_data_to_mysql(table_name, format_data([id_], [n]))
+        total += 1
+    return total

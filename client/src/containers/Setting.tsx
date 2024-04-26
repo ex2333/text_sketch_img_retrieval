@@ -169,15 +169,16 @@ const Setting = (props: any) => {
     });
   });
   const { process, train, count, search, clearAll } = useContext(queryContext);
-  const { setImages, loading, setLoading } = props;
+  const { setImages, loading_, setLoading_} = props;
   const classes = useStyles({});
   const [inputs, setInputs]: any = useState("");
   const [textQuery, setTextQuery]: any = useState("");
-  const [topK, setTopK]: any = useState(5);
+  const [topK, setTopK]: any = useState(8);
   const [totalNum, setTotalNum]: any = useState(0);
   const [[current, total], setProcessedNum]: any = useState([0, 0]);
   const [image, setImage]: any = useState();
   const [ifUpload, setIfUpload]: any = useState(false);
+  const [loading, setLoading]: any = useState(false);
 
   const benchImage = useRef<any>(null);
   const setText = loading
@@ -245,31 +246,6 @@ const Setting = (props: any) => {
     setImage();
   }
 
-  // const _keepProcess = () => {
-  //   process().then((res: any) => {
-  //     const { data, status } = res;
-  //     if (status === 200) {
-  //       const [_current, _total] = data
-  //         .split(",")
-  //         .map((item: any) => Number.parseInt(item.split(":")[1]));
-  //       setProcessedNum([_current, _total]);
-  //       if (_current !== _total && loading ) {
-  //         setTimeout(() => _keepProcess(), 1000);
-  //       } else {
-  //         setTimeout(() => {
-  //           count().then((res: any) => {
-  //             const { data, status } = res;
-  //             if (status === 200) {
-  //               setTotalNum(data);
-  //               setLoading(false);
-  //             }
-  //           });
-  //         }, 3000);
-  //       }
-  //     }
-  //   });
-  // };
-  
   const uploadImgPath = () => {
     setLoading(true);
     train({ File: inputs }).then((res: any) => {setInputs(""); setLoading(false); countImages()});
