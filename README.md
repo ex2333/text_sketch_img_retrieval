@@ -3,7 +3,7 @@
 This project is based on TASK-former proposed in ECCV paper [A Sketch Is Worth a Thousand Words:
 Image Retrieval with Text and Sketch](https://link.springer.com/chapter/10.1007/978-3-031-19839-7_15).
 
-We use TASK-former to extract image features, and use Milvus to build a system that can perform image retrieval with both a sketch and a text query.
+We use TASK-former to extract image features, and use vector dataset Milvus to build a system that can perform image retrieval with both a sketch and a text query.
 
 Our code is based on:
 - TASK-former offical implement: https://github.com/janesjanes/tsbir
@@ -92,6 +92,9 @@ $ cd text_sketch_img_retrieval/client/
 $ docker build -t tsir_client:latest .
 ```
 
+Then, build and run a docker container.
 ```bash
 $ docker run -d -p 3000:80 --name tsir_client tsir_client:latest
 ```
+
+Navigate to 127.0.0.1:8001 in your browser to access the front-end interface.
