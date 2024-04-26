@@ -35,6 +35,7 @@ const DrawingBoard = ({ onUpload }) => {
 
     const endDrawing = () => {
         setIsDrawing(false);
+        uploadDrawing();
     };
 
     const clearCanvas = () => {
@@ -67,10 +68,10 @@ const DrawingBoard = ({ onUpload }) => {
                 style={{width: "390px", height: "300px", border: "1px solid black", backgroundColor: "#CCE8CF", borderRadius: "10px"}}
             ></canvas>
             <div style={{ marginTop: "10px" }}>
-                <Fab color="primary" variant="extended" onClick={uploadDrawing} style={{ width: "70px", height: "40px", marginBottom: "10px", marginLeft: "200px", backgroundColor: "#6B8E23" }}>
+                {/* <Fab color="primary" variant="extended" onClick={uploadDrawing} style={{ width: "70px", height: "40px", marginBottom: "10px", marginLeft: "200px", backgroundColor: "#6B8E23" }}>
                     Finish
-                </Fab>
-                <Fab color="secondary" variant="extended" onClick={clearCanvas} style={{ width: "70px", height: "40px", marginBottom: "10px", marginLeft: "20px", backgroundColor: "#BC8F8F" }}>
+                </Fab> */}
+                <Fab color="secondary" variant="extended" onClick={clearCanvas} style={{ width: "70px", height: "40px", marginBottom: "10px", marginLeft: "320px", backgroundColor: "#BC8F8F" }}>
                     Clear
                 </Fab>
             </div>

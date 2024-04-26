@@ -277,7 +277,7 @@ const Setting = (props: any) => {
     <div className={classes.setting}>
       <div className={classes.header}>
         <img src={Logo} width="150px" alt="logo" />
-        <p>Image Search Demo</p>
+        <p>Image Retrieval with Text and Sketch</p>
       </div>
       <div className={classes.configHead}>
         <h4 className={classes.config}>Config</h4>
@@ -285,7 +285,7 @@ const Setting = (props: any) => {
           CLEAR ALL
         </h4>
       </div>
-      <SeperatLine title={`Set up image set`} style={{ marginBottom: "0px" }} />
+      <SeperatLine title={`Setup Image Set`} style={{ marginBottom: "0px" }} />
       <div className={classes.imageSet}>
         <div className={classes.counts}>
           <p style={{ color:  "#808A87" }}>{setText}</p>
@@ -359,13 +359,13 @@ const Setting = (props: any) => {
               variant="extended"
               onClick={doSearch}
             >
-              Submit Queries
+              Submit
         </Fab>
       </div>
-      <div className={classes.setPath} style={{justifyContent: "center", marginBottom: "30px"}}>
+      <div className={classes.setPath} style={{justifyContent: "center", marginBottom: "29px"}}>
           <TextField
             classes={{ root: classes.textQueryInput }}
-            style={{width: "70%"}}
+            style={{width: "73%"}}
             label=""
             variant="outlined"
             value={textQuery}
@@ -397,7 +397,7 @@ const Setting = (props: any) => {
                 backgroundColor: "gray",
                 width:  "20%",
                 height: "36px",
-                marginRight: "10px"
+                marginLeft: "5px"
               }}
               variant="extended"
               onClick={onSwitchClick}
