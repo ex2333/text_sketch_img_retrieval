@@ -1,6 +1,13 @@
 # Image Retrieval with Text and Sketch
 
-This project uses pytorch to extract image features by [TASK-former](), and uses Milvus to build a system that can perform image retrieval with both a sketch and a text query.
+This project is bases on TASK-former proposed in ECCV paper [A Sketch Is Worth a Thousand Words:
+Image Retrieval with Text and Sketch](https://link.springer.com/chapter/10.1007/978-3-031-19839-7_15).
+
+We use TASK-former to extract image features, and use Milvus to build a system that can perform image retrieval with both a sketch and a text query.
+
+Our code is based on:
+- TASK-former offical implement: https://github.com/janesjanes/tsbir
+- Milvus Bootcamp: https://github.com/milvus-io/bootcamp/tree/master/applications/image/reverse_image_search
 
 The system architecture is as below:
 
