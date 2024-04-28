@@ -1,11 +1,11 @@
 # Image Retrieval with Text and Sketch
 
-This project is based on TASK-former proposed in ECCV paper [A Sketch Is Worth a Thousand Words:
-Image Retrieval with Text and Sketch](https://link.springer.com/chapter/10.1007/978-3-031-19839-7_15).
+This project is based on TASK-former (Text And SKetch transformer) proposed in ECCV paper [A Sketch Is Worth a Thousand Words: Image Retrieval with Text and Sketch](https://link.springer.com/chapter/10.1007/978-3-031-19839-7_15).
 
-We use TASK-former to extract image features, and use vector dataset Milvus to build a system that can perform image retrieval with both a sketch and a text query.
+We use TASK-former to extract features, and use vector dataset Milvus to build a system that can perform image retrieval with both a sketch and a text query.
 
 Our code is based on:
+
 - TASK-former offical implement: https://github.com/janesjanes/tsbir
 - Milvus Bootcamp: https://github.com/milvus-io/bootcamp/tree/master/applications/image/reverse_image_search
 
@@ -31,6 +31,7 @@ The system architecture is as below:
 First, you need to start Milvus & Mysql servers.
 
 ```bash
+$ git clone https://gitee.com/ex2333/text_sketch_img_retrieval
 $ docker-compose up -d
 ```
 
@@ -43,7 +44,6 @@ Then to start the system server, and it provides HTTP backend services.
 > Please note the Milvus version should [match pymilvus](https://milvus.io/docs/release_notes.md#Release-Notes) version in [requirements.txt](./server/requirements.txt). And this tutorial uses [milvus 2.2.10](https://milvus.io/docs/v2.2.x/install_standalone-docker.md) and [pymilvus 2.2.11](https://milvus.io/docs/release_notes.md#2210).
 
 ```bash
-$ git clone https://gitee.com/ex2333/text_sketch_img_retrieval
 $ cd text_sketch_img_retrieval/server
 $ pip install -r requirements.txt
 $ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
@@ -61,24 +61,6 @@ Then start the server with Fastapi.
 $ python src/main.py
 ```
 
-- **API Docs**
-
-After starting the service, Please visit `127.0.0.1:5000/docs` in your browser to view all the APIs.
-
-![fastapi](pic/fastapi.png)
-
-> /data: get image by path
->
-> /progress: get load progress
->
-> /img/load: load images into milvus collection
->
-> /img/count: count rows in milvus collection
->
-> /img/drop: drop milvus collection & corresponding Mysql table
->
-> /img/search: search for most similar image emb in milvus collection and get image info by milvus id in Mysql
-
 ### 3. Start Client
 
 Next, start the frontend GUI.
@@ -93,8 +75,9 @@ $ docker build -t tsir_client:latest .
 ```
 
 Then, build and run a docker container.
+
 ```bash
 $ docker run -d -p 3000:80 --name tsir_client tsir_client:latest
 ```
 
-Navigate to 127.0.0.1:8001 in your browser to access the front-end interface.
+Navigate to 127.0.0.1:3000 in your browser to access the front-end interface.

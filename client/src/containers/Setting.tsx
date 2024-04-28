@@ -10,7 +10,7 @@ import Slider from "@material-ui/core/Slider";
 import { DropzoneArea } from "material-ui-dropzone";
 import SeperatLine from "../components/SeperatLine";
 import { baseColor } from "../utils/color";
-import Logo from "./Logo.svg";
+import Logo from "./Logo.png";
 import DrawingBoard from "../components/DrawingBoard"; // 导入手绘组件
 
 const Setting = (props: any) => {
@@ -276,7 +276,7 @@ const Setting = (props: any) => {
   return (
     <div className={classes.setting}>
       <div className={classes.header}>
-        <img src={Logo} width="150px" alt="logo" />
+        <img src={Logo} width="100px" alt="logo" style={{marginBottom: "10px"}}/>
         <p>Image Retrieval with Text and Sketch</p>
       </div>
       <div className={classes.configHead}>
