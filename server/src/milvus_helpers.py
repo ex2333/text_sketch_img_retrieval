@@ -66,6 +66,7 @@ class MilvusHelper:
             self.set_collection(collection_name)
             default_index = {"metric_type": METRIC_TYPE, "index_type": "IVF_FLAT", "params": {"nlist": 2048}}
             status = self.collection.create_index(field_name="embedding", index_params=default_index)
+            self.collection.load()
             if not status.code:
                 LOGGER.debug(
                     f"Successfully create index in collection:{collection_name} with param:{default_index}")
