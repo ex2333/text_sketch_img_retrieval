@@ -41,7 +41,7 @@ Then to start the system server, and it provides HTTP backend services.
 
 - **Install the Python packages**
 
-> Please note the Milvus version should [match pymilvus](https://milvus.io/docs/release_notes.md#Release-Notes) version in [requirements.txt](./server/requirements.txt). And this tutorial uses [milvus 2.2.10](https://milvus.io/docs/v2.2.x/install_standalone-docker.md) and [pymilvus 2.2.11](https://milvus.io/docs/release_notes.md#2210).
+> Please note the Milvus version should [match pymilvus](https://milvus.io/docs/release_notes.md#Release-Notes) version in [requirements.txt](./server/requirements.txt). And this tutorial uses [milvus 2.4.0](https://milvus.io/docs/release_notes.md#2210) and [pymilvus 2.4.0](https://milvus.io/api-reference/pymilvus/v2.4.x/About.md)
 
 ```bash
 $ cd text_sketch_img_retrieval/server
@@ -77,7 +77,7 @@ $ docker build -t tsir_client:latest .
 Then, build and run a docker container.
 
 ```bash
-$ docker run -d -p 3000:80 --name tsir_client tsir_client:latest
+$ docker run -d -p 8000:80 --name tsir_client tsir_client:latest
 ```
 
-Navigate to 127.0.0.1:3000 in your browser to access the front-end interface.
+Navigate to 127.0.0.1:8000 in your browser to access the front-end interface.
