@@ -32,6 +32,7 @@ First, you need to start Milvus & Mysql servers.
 
 ```bash
 $ git clone https://gitee.com/ex2333/text_sketch_img_retrieval
+$ cd text_sketch_img_retrieval
 $ docker-compose up -d
 ```
 
@@ -74,7 +75,7 @@ $ cd text_sketch_img_retrieval/client/
 $ docker build -t tsir_client:latest .
 ```
 
-Then, build and run a docker container.
+Then, run a docker container.
 
 ```bash
 $ docker run -d -p 8000:80 --name tsir_client tsir_client:latest
