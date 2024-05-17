@@ -28,4 +28,4 @@ MODLE_CONFIG_FILE = 'src/task_former/ViT-B-16.json'
 MODLE_WEIGHT = 'src/task_former/tsbir_model_final.pt'
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", "128"))
 DEVICE = os.getenv("DEVICE", "cuda")
-NUM_WORKERS = int(os.getenv('NUM_WORKERS', "4"))
+NUM_WORKERS = int(os.getenv('NUM_WORKERS', "2"))
