@@ -1,12 +1,18 @@
-import React, { useState, useRef } from "react";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
+import React, { useState, useRef, useEffect } from "react";
 import Fab from "@material-ui/core/Fab";
-import SendIcon from '@material-ui/icons/Send';
-import CloseIcon from "@material-ui/icons/Close";
 
 const DrawingBoard = ({ onUpload }) => {
     const canvasRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
+    const [paths, setPaths] = useState([]);
+    const [currentPath, setCurrentPath] = useState([]);
+
+    useEffect(() => {
+        if (!isDrawing && currentPath.length) {
+            setPaths((prevPaths) => [...prevPaths, currentPath]);
+            setCurrentPath([]);
+        }
+    }, [isDrawing, currentPath]);
 
     const startDrawing = (e) => {
         const canvas = canvasRef.current;
@@ -18,6 +24,7 @@ const DrawingBoard = ({ onUpload }) => {
         setIsDrawing(true);
         ctx.beginPath();
         ctx.moveTo(x, y);
+        setCurrentPath([{ x, y }]);
     };
 
     const draw = (e) => {
@@ -31,6 +38,7 @@ const DrawingBoard = ({ onUpload }) => {
 
         ctx.lineTo(x, y);
         ctx.stroke();
+        setCurrentPath((prevPath) => [...prevPath, { x, y }]);
     };
 
     const endDrawing = () => {
@@ -42,6 +50,7 @@ const DrawingBoard = ({ onUpload }) => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        setPaths([]);
     };
 
     const uploadDrawing = () => {
@@ -53,6 +62,29 @@ const DrawingBoard = ({ onUpload }) => {
             }
         }, "image/png");
         // setImage(dataURL); // 将绘制的图片路径传递给 uploadImg 函数
+    };
+
+    const undoLastPath = () => {
+        setPaths((prevPaths) => {
+            const newPaths = prevPaths.slice(0, -1);
+            redrawCanvas(newPaths);
+            return newPaths;
+        });
+    };
+
+    const redrawCanvas = (paths) => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        paths.forEach((path) => {
+            ctx.beginPath();
+            ctx.moveTo(path[0].x, path[0].y);
+            path.forEach(point => {
+                ctx.lineTo(point.x, point.y);
+                ctx.stroke();
+            });
+        });
     };
 
     return (
@@ -67,11 +99,11 @@ const DrawingBoard = ({ onUpload }) => {
                 height={300}
                 style={{width: "390px", height: "300px", border: "1px solid black", backgroundColor: "#CCE8CF", borderRadius: "10px"}}
             ></canvas>
-            <div style={{ marginTop: "10px" }}>
-                {/* <Fab color="primary" variant="extended" onClick={uploadDrawing} style={{ width: "70px", height: "40px", marginBottom: "10px", marginLeft: "200px", backgroundColor: "#6B8E23" }}>
-                    Finish
-                </Fab> */}
-                <Fab color="secondary" variant="extended" onClick={clearCanvas} style={{ width: "70px", height: "40px", marginBottom: "10px", marginLeft: "320px", backgroundColor: "#BC8F8F" }}>
+            <div style={{ marginTop: "10px", display: "flex"}}>
+                <Fab color="primary" variant="extended" onClick={undoLastPath} style={{ width: "70px", height: "40px", marginBottom: "10px", marginLeft: "220px", backgroundColor: "#006400" }}>
+                    Undo
+                </Fab>
+                <Fab color="secondary" variant="extended" onClick={clearCanvas} style={{ width: "70px", height: "40px", marginBottom: "10px", marginLeft: "10px", backgroundColor: "#BC8F8F" }}>
                     Clear
                 </Fab>
             </div>
