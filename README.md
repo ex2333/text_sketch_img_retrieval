@@ -52,7 +52,7 @@ $ pip3 install torch torchvision torchaudio --index-url https://download.pytorch
 
 - **Download model weights**
 
-Download weights of TASK-former from [here](https://link.springer.com/chapter/10.1007/978-3-031-19839-7_15), and save as `server\src\task_former\tsbir_model_final.pt`.
+Download weights of TASK-former from [here](https://patsorn.me/projects/tsbir/data/tsbir_model_final.pt), and save as `server/src/task_former/tsbir_model_final.pt`.
 
 - **Run the code**
 
