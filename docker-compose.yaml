@@ -43,7 +43,7 @@ services:
 
   standalone:
     container_name: milvus-standalone
-    image: milvusdb/milvus:v2.4.1
+    image: milvusdb/milvus:v2.4.0-rc.1
 #    image: milvusdb/milvus:v2.4.2-20240515-b2d83d33-arm64
     command: ["milvus", "run", "standalone"]
     security_opt:
