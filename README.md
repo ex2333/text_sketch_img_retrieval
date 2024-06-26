@@ -17,7 +17,7 @@ The system architecture is as below:
 
 ### Requirements
 
-- [Milvus 2.2.10](https://milvus.io/)
+- [Milvus 2.4.1](https://milvus.io/)
 - [MySQL](https://hub.docker.com/r/mysql/mysql-server)
 - [Python3](https://www.python.org/downloads/)
 - [Pytorch](https://pytorch.org)
