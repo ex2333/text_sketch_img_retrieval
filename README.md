@@ -31,7 +31,6 @@ The system architecture is as below:
 First, you need to start Milvus & Mysql servers.
 
 ```bash
-$ git clone https://gitee.com/ex2333/text_sketch_img_retrieval
 $ cd text_sketch_img_retrieval
 $ docker-compose up -d
 ```
